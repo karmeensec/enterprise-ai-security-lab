@@ -1,0 +1,60 @@
+{
+  "experiment": "07_ai_accuracy_evaluation",
+  "model": "Qwen/Qwen3-0.6B",
+  "device": "cuda",
+  "scoring_method": "keyword heuristic, not factual accuracy",
+  "passed": 3,
+  "total": 5,
+  "pass_rate_percent": 60.0,
+  "results": [
+    {
+      "id": "CYB-001",
+      "question": "What does SSO stand for?",
+      "answer": "SSO stands for Single Sign-On, which allows users to access multiple services or applications using a single set of credentials.",
+      "seconds": 2.676,
+      "passed": true,
+      "missing_required": [],
+      "forbidden_matches": []
+    },
+    {
+      "id": "CYB-002",
+      "question": "What does SAML stand for?",
+      "answer": "SAML stands for **Secure Single Sign In**. It is a standard protocol for authentication and authorization between applications and a single sign-in provider.",
+      "seconds": 2.406,
+      "passed": false,
+      "missing_required": [
+        "security assertion markup language"
+      ],
+      "forbidden_matches": []
+    },
+    {
+      "id": "CYB-003",
+      "question": "What does MFA stand for?",
+      "answer": "MFA stands for Multi-Factor Authentication, a security protocol that requires users to provide more than one form of verification to access a service or account.",
+      "seconds": 2.457,
+      "passed": true,
+      "missing_required": [],
+      "forbidden_matches": []
+    },
+    {
+      "id": "CYB-004",
+      "question": "What is a firewall?",
+      "answer": "A firewall is a network security system that acts as a barrier between internal and external networks, monitoring and controlling traffic to prevent unauthorized access and potential threats.",
+      "seconds": 2.361,
+      "passed": true,
+      "missing_required": [],
+      "forbidden_matches": []
+    },
+    {
+      "id": "CYB-005",
+      "question": "What is prompt injection?",
+      "answer": "Prompt injection is a type of security vulnerability where an attacker can inject malicious prompts (often text or code) into a system or application, which can then be used to perform unauthorized actions, such as data theft, system control, or data modification.",
+      "seconds": 3.953,
+      "passed": false,
+      "missing_required": [
+        "instruction"
+      ],
+      "forbidden_matches": []
+    }
+  ]
+}
