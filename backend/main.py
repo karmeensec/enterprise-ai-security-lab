@@ -1,13 +1,16 @@
 
 from datetime import datetime, timezone
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from pydantic import BaseModel, Field
+
+from backend.llm_service import get_llm_service, MODEL_NAME
+
 
 app = FastAPI(
     title="Enterprise AI Security Lab",
     description="Enterprise AI engineering and security research API",
-    version="0.1.0",
+    version="0.2.0",
 )
 
 
@@ -19,13 +22,14 @@ class ChatResponse(BaseModel):
     response: str
     model: str
     status: str
+    generation_time_seconds: float
 
 
 @app.get("/")
 def root():
     return {
         "project": "Enterprise AI Security Lab",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "status": "development",
     }
 
@@ -40,10 +44,9 @@ def health():
 
 
 @app.post("/chat", response_model=ChatResponse)
-def chat(request: ChatRequest):
-    # Placeholder until we integrate our Qwen model.
-    return ChatResponse(
-        response=f"Received message: {request.message}",
-        model="not-connected",
-        status="placeholder",
-    )
+def chat(
+    request: ChatRequest,
+    llm=Depends(get_llm_service),
+):
+    result = llm.generate(request.message)
+    return ChatResponse(**result)
