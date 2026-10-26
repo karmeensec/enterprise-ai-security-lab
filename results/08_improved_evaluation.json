@@ -1,0 +1,54 @@
+{
+  "experiment": "08_improved_ai_evaluation",
+  "source": "07_accuracy_baseline.json",
+  "method": "Deterministic heuristic triage",
+  "limitations": "Automated PASS does not establish factual correctness. REVIEW requires human assessment.",
+  "summary": {
+    "pass": 3,
+    "fail": 1,
+    "review": 1,
+    "total": 5
+  },
+  "results": [
+    {
+      "id": "CYB-001",
+      "question": "What does SSO stand for?",
+      "answer": "SSO stands for Single Sign-On, which allows users to access multiple services or applications using a single set of credentials.",
+      "previous_keyword_pass": true,
+      "new_status": "PASS",
+      "explanation": "Automated checks satisfied; not expert-verified"
+    },
+    {
+      "id": "CYB-002",
+      "question": "What does SAML stand for?",
+      "answer": "SAML stands for **Secure Single Sign In**. It is a standard protocol for authentication and authorization between applications and a single sign-in provider.",
+      "previous_keyword_pass": false,
+      "new_status": "FAIL",
+      "explanation": "Known factual error: ['secure single sign in']"
+    },
+    {
+      "id": "CYB-003",
+      "question": "What does MFA stand for?",
+      "answer": "MFA stands for Multi-Factor Authentication, a security protocol that requires users to provide more than one form of verification to access a service or account.",
+      "previous_keyword_pass": true,
+      "new_status": "PASS",
+      "explanation": "Automated checks satisfied; not expert-verified"
+    },
+    {
+      "id": "CYB-004",
+      "question": "What is a firewall?",
+      "answer": "A firewall is a network security system that acts as a barrier between internal and external networks, monitoring and controlling traffic to prevent unauthorized access and potential threats.",
+      "previous_keyword_pass": true,
+      "new_status": "PASS",
+      "explanation": "Automated checks satisfied; not expert-verified"
+    },
+    {
+      "id": "CYB-005",
+      "question": "What is prompt injection?",
+      "answer": "Prompt injection is a type of security vulnerability where an attacker can inject malicious prompts (often text or code) into a system or application, which can then be used to perform unauthorized actions, such as data theft, system control, or data modification.",
+      "previous_keyword_pass": false,
+      "new_status": "REVIEW",
+      "explanation": "Missing expected concept: ['instruction']. Human review required."
+    }
+  ]
+}
