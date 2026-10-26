@@ -1,0 +1,31 @@
+{
+  "experiment": "13_semantic_document_search",
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "question": "What should I do if I receive an unexpected login approval notification?",
+  "expected_top_document": "POL-001",
+  "top_1_correct": false,
+  "top_3_correct": true,
+  "retrieved_documents": [
+    {
+      "rank": 1,
+      "document_id": "POL-003",
+      "title": "Incident Reporting Policy",
+      "similarity_score": 0.3095,
+      "content": "Employees must immediately report suspected phishing emails, compromised credentials, malware infections, or unauthorized account activity to the security operations team."
+    },
+    {
+      "rank": 2,
+      "document_id": "POL-001",
+      "title": "Multi-Factor Authentication Policy",
+      "similarity_score": 0.2597,
+      "content": "All employees must use multi-factor authentication when accessing corporate email, VPN services, and internal applications. Employees should report unexpected MFA approval requests to the security team."
+    },
+    {
+      "rank": 3,
+      "document_id": "POL-005",
+      "title": "Remote Access Policy",
+      "similarity_score": 0.131,
+      "content": "Employees working remotely must use an approved company VPN when connecting to protected internal resources. Remote connections must comply with device security and authentication requirements."
+    }
+  ]
+}
