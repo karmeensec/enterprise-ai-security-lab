@@ -1,0 +1,76 @@
+{
+  "experiment": "16_citation_validation",
+  "source": "15_rag_comparison.json",
+  "method": "Deterministic document-ID validation",
+  "limitations": "Matching a citation to the expected document does not prove that the cited document supports every claim in the answer.",
+  "summary": {
+    "total": 4,
+    "status_counts": {
+      "EXPECTED_SOURCE_FOUND": 2,
+      "MISSING": 1,
+      "MISMATCH": 1
+    }
+  },
+  "results": [
+    {
+      "test_id": "EVAL-001",
+      "question": "What is the minimum corporate password length?",
+      "answer": "The minimum corporate password length is 14 characters, as specified in POL-002.",
+      "status": "EXPECTED_SOURCE_FOUND",
+      "reason": "Expected document ID found in answer",
+      "citations": [
+        "POL-002"
+      ],
+      "expected_source": "POL-002",
+      "expected_source_present": true,
+      "unknown_citations": [],
+      "not_retrieved": [],
+      "other_citations": []
+    },
+    {
+      "test_id": "EVAL-002",
+      "question": "What should I do after an unexpected MFA approval request?",
+      "answer": "After an unexpected MFA approval request, you should immediately report it to the security team for further investigation.",
+      "status": "MISSING",
+      "reason": "No document IDs cited",
+      "citations": [],
+      "expected_source": "POL-001",
+      "expected_source_present": false,
+      "unknown_citations": [],
+      "not_retrieved": [],
+      "other_citations": []
+    },
+    {
+      "test_id": "EVAL-003",
+      "question": "What are the company's data classification levels?",
+      "answer": "The company's data classification levels are Public, Internal, Confidential, and Restricted, as outlined in POL-004.",
+      "status": "EXPECTED_SOURCE_FOUND",
+      "reason": "Expected document ID found in answer",
+      "citations": [
+        "POL-004"
+      ],
+      "expected_source": "POL-004",
+      "expected_source_present": true,
+      "unknown_citations": [],
+      "not_retrieved": [],
+      "other_citations": []
+    },
+    {
+      "test_id": "EVAL-004",
+      "question": "What should employees use to access protected resources remotely?",
+      "answer": "Employees must use an approved company VPN to access protected internal resources remotely, as per POL-001.",
+      "status": "MISMATCH",
+      "reason": "Expected supporting policy not cited",
+      "citations": [
+        "POL-001"
+      ],
+      "expected_source": "POL-005",
+      "expected_source_present": false,
+      "unknown_citations": [],
+      "not_retrieved": [],
+      "other_citations": [
+        "POL-001"
+      ]
+    }
+  ]
+}
