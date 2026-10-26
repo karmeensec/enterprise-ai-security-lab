@@ -1,0 +1,172 @@
+{
+  "experiment": "15_rag_vs_no_rag_evaluation",
+  "timestamp_utc": "2026-10-26T18:19:19.849199+00:00",
+  "model": "Qwen/Qwen3-0.6B",
+  "method": "Single-run heuristic comparison",
+  "limitations": "Term checks do not prove factual accuracy. Citation labels do not prove claim support. Generation is stochastic and outcomes may vary.",
+  "summary": {
+    "total_questions": 4,
+    "without_rag_term_passes": 0,
+    "with_rag_term_passes": 4,
+    "expected_source_retrieved": 4,
+    "expected_source_cited": 0
+  },
+  "results": [
+    {
+      "test_id": "EVAL-001",
+      "question": "What is the minimum corporate password length?",
+      "expected_source": "POL-002",
+      "without_rag": {
+        "answer": "The minimum corporate password length is typically 8 characters, as outlined in [POL-001].",
+        "evaluation": {
+          "term_check_pass": false,
+          "missing_terms": [
+            "14"
+          ]
+        },
+        "generation_time_seconds": 3.792,
+        "input_tokens": 116,
+        "generated_tokens": 22,
+        "truncated": false
+      },
+      "with_rag": {
+        "answer": "The minimum corporate password length is 14 characters, as specified in POL-002.",
+        "evaluation": {
+          "term_check_pass": true,
+          "missing_terms": []
+        },
+        "generation_time_seconds": 3.418,
+        "input_tokens": 266,
+        "generated_tokens": 21,
+        "truncated": false,
+        "retrieved_document_ids": [
+          "POL-002",
+          "POL-001",
+          "POL-005"
+        ],
+        "expected_source_retrieved": true,
+        "cited_document_ids": [],
+        "expected_source_cited": false,
+        "invalid_citations": []
+      }
+    },
+    {
+      "test_id": "EVAL-002",
+      "question": "What should I do after an unexpected MFA approval request?",
+      "expected_source": "POL-001",
+      "without_rag": {
+        "answer": "After an unexpected MFA approval request, ensure to review the request for compliance and follow the company's procedures to confirm the approval. For specific guidance, refer to [POL-001].",
+        "evaluation": {
+          "term_check_pass": false,
+          "missing_terms": [
+            "report",
+            "security"
+          ]
+        },
+        "generation_time_seconds": 6.844,
+        "input_tokens": 120,
+        "generated_tokens": 40,
+        "truncated": false
+      },
+      "with_rag": {
+        "answer": "After an unexpected MFA approval request, you should immediately report it to the security team for further investigation.",
+        "evaluation": {
+          "term_check_pass": true,
+          "missing_terms": []
+        },
+        "generation_time_seconds": 3.687,
+        "input_tokens": 263,
+        "generated_tokens": 22,
+        "truncated": false,
+        "retrieved_document_ids": [
+          "POL-001",
+          "POL-003",
+          "POL-005"
+        ],
+        "expected_source_retrieved": true,
+        "cited_document_ids": [],
+        "expected_source_cited": false,
+        "invalid_citations": []
+      }
+    },
+    {
+      "test_id": "EVAL-003",
+      "question": "What are the company's data classification levels?",
+      "expected_source": "POL-004",
+      "without_rag": {
+        "answer": "The company's data classification levels are determined by [POL-001], which outlines the criteria for categorizing data based on sensitivity and risk. This policy ensures data is appropriately protected and managed across different departments and environments.",
+        "evaluation": {
+          "term_check_pass": false,
+          "missing_terms": [
+            "public",
+            "internal",
+            "confidential",
+            "restricted"
+          ]
+        },
+        "generation_time_seconds": 7.631,
+        "input_tokens": 117,
+        "generated_tokens": 46,
+        "truncated": false
+      },
+      "with_rag": {
+        "answer": "The company's data classification levels are Public, Internal, Confidential, and Restricted, as outlined in POL-004.",
+        "evaluation": {
+          "term_check_pass": true,
+          "missing_terms": []
+        },
+        "generation_time_seconds": 4.393,
+        "input_tokens": 260,
+        "generated_tokens": 26,
+        "truncated": false,
+        "retrieved_document_ids": [
+          "POL-004",
+          "POL-003",
+          "POL-002"
+        ],
+        "expected_source_retrieved": true,
+        "cited_document_ids": [],
+        "expected_source_cited": false,
+        "invalid_citations": []
+      }
+    },
+    {
+      "test_id": "EVAL-004",
+      "question": "What should employees use to access protected resources remotely?",
+      "expected_source": "POL-005",
+      "without_rag": {
+        "answer": "Employees should use secure remote access protocols such as RDP, TACACS+, or Kerberos, as supported by [POL-001].",
+        "evaluation": {
+          "term_check_pass": false,
+          "missing_terms": [
+            "vpn"
+          ]
+        },
+        "generation_time_seconds": 5.346,
+        "input_tokens": 118,
+        "generated_tokens": 31,
+        "truncated": false
+      },
+      "with_rag": {
+        "answer": "Employees must use an approved company VPN to access protected internal resources remotely, as per POL-001.",
+        "evaluation": {
+          "term_check_pass": true,
+          "missing_terms": []
+        },
+        "generation_time_seconds": 3.703,
+        "input_tokens": 267,
+        "generated_tokens": 23,
+        "truncated": false,
+        "retrieved_document_ids": [
+          "POL-005",
+          "POL-004",
+          "POL-001"
+        ],
+        "expected_source_retrieved": true,
+        "cited_document_ids": [],
+        "expected_source_cited": false,
+        "invalid_citations": []
+      }
+    }
+  ]
+}
