@@ -13,6 +13,8 @@ from backend.llm_service import (
     get_llm_service,
 )
 
+from backend.retrieval_service import get_retrieval_service
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("enterprise_ai_security_lab")
@@ -40,6 +42,18 @@ class ChatResponse(BaseModel):
     generated_tokens: int
     truncated: bool
     request_id: str
+
+
+class SourceDocument(BaseModel):
+    document_id: str
+    title: str
+    similarity_score: float
+
+
+class RAGChatResponse(ChatResponse):
+    sources: list[SourceDocument]
+    retrieval_count: int
+
 
 
 @app.middleware("http")
@@ -119,4 +133,77 @@ def chat(
     return ChatResponse(
         **result,
         request_id=request_id,
+    )
+
+
+
+@app.post("/chat/rag", response_model=RAGChatResponse)
+def rag_chat(
+    request: ChatRequest,
+    http_request: Request,
+    llm=Depends(get_llm_service),
+    retriever=Depends(get_retrieval_service),
+):
+    request_id = http_request.state.request_id
+
+    try:
+        documents = retriever.search(
+            request.message,
+            top_k=3
+        )
+
+        if not documents:
+            raise HTTPException(
+                status_code=404,
+                detail="No relevant documents available"
+            )
+
+        context = "\n\n".join(
+            (
+                f"[{doc['document_id']}] "
+                f"{doc['title']}\n"
+                f"{doc['content']}"
+            )
+            for doc in documents
+        )
+
+        result = llm.generate(
+            request.message,
+            context=context
+        )
+
+    except HTTPException:
+        raise
+
+    except InputTooLongError:
+        raise HTTPException(
+            status_code=413,
+            detail="RAG input exceeds token limit"
+        )
+
+    except Exception:
+        logger.exception(
+            "RAG request failed request_id=%s",
+            request_id
+        )
+
+        raise HTTPException(
+            status_code=503,
+            detail="RAG service temporarily unavailable"
+        )
+
+    sources = [
+        SourceDocument(
+            document_id=doc["document_id"],
+            title=doc["title"],
+            similarity_score=doc["similarity_score"]
+        )
+        for doc in documents
+    ]
+
+    return RAGChatResponse(
+        **result,
+        request_id=request_id,
+        sources=sources,
+        retrieval_count=len(sources)
     )
