@@ -1,0 +1,1252 @@
+{
+  "experiment": "27_hybrid_policy_comparison",
+  "source": "26_hybrid_grounding_results.json",
+  "limitations": "These decision policies are evaluated on previously used, development-influenced cases. NLI probabilities are not calibrated safety guarantees. Policies must be tested on new held-out cases before deployment.",
+  "policies": {
+    "conservative_baseline": {
+      "metrics": {
+        "total": 25,
+        "exact_matches": 7,
+        "exact_match_rate": 0.28,
+        "unsafe_approvals": 0,
+        "false_rejections": 0,
+        "supported_approved": 6,
+        "unsupported_rejected": 1,
+        "abstentions": 18,
+        "abstention_rate": 0.72
+      },
+      "results": [
+        {
+          "test_id": "GROUND-001",
+          "dataset": "grounding_test_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.8189,
+            "probabilities": {
+              "contradiction": 0.0001,
+              "entailment": 0.8189,
+              "neutral": 0.181
+            }
+          }
+        },
+        {
+          "test_id": "GROUND-002",
+          "dataset": "grounding_test_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9983,
+            "probabilities": {
+              "contradiction": 0.0012,
+              "entailment": 0.0006,
+              "neutral": 0.9983
+            }
+          }
+        },
+        {
+          "test_id": "GROUND-003",
+          "dataset": "grounding_test_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9856,
+            "probabilities": {
+              "contradiction": 0.0011,
+              "entailment": 0.9856,
+              "neutral": 0.0133
+            }
+          }
+        },
+        {
+          "test_id": "GROUND-004",
+          "dataset": "grounding_test_cases.json",
+          "expected": "unsupported",
+          "predicted": "unsupported",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9798,
+            "probabilities": {
+              "contradiction": 0.9798,
+              "entailment": 0.0015,
+              "neutral": 0.0187
+            }
+          }
+        },
+        {
+          "test_id": "GROUND-005",
+          "dataset": "grounding_test_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9996,
+            "probabilities": {
+              "contradiction": 0.0003,
+              "entailment": 0.0001,
+              "neutral": 0.9996
+            }
+          }
+        },
+        {
+          "test_id": "ADV-001",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "supported",
+          "predicted": "needs_review",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.5939,
+            "probabilities": {
+              "contradiction": 0.002,
+              "entailment": 0.5939,
+              "neutral": 0.4041
+            }
+          }
+        },
+        {
+          "test_id": "ADV-002",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9904,
+            "probabilities": {
+              "contradiction": 0.0002,
+              "entailment": 0.0094,
+              "neutral": 0.9904
+            }
+          }
+        },
+        {
+          "test_id": "ADV-003",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.5644,
+            "probabilities": {
+              "contradiction": 0.5644,
+              "entailment": 0.0525,
+              "neutral": 0.3832
+            }
+          }
+        },
+        {
+          "test_id": "ADV-004",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9991,
+            "probabilities": {
+              "contradiction": 0.9991,
+              "entailment": 0.0,
+              "neutral": 0.0009
+            }
+          }
+        },
+        {
+          "test_id": "ADV-005",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9508,
+            "probabilities": {
+              "contradiction": 0.0023,
+              "entailment": 0.9508,
+              "neutral": 0.0469
+            }
+          }
+        },
+        {
+          "test_id": "ADV-006",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9987,
+            "probabilities": {
+              "contradiction": 0.9987,
+              "entailment": 0.0001,
+              "neutral": 0.0012
+            }
+          }
+        },
+        {
+          "test_id": "ADV-007",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9919,
+            "probabilities": {
+              "contradiction": 0.0001,
+              "entailment": 0.9919,
+              "neutral": 0.008
+            }
+          }
+        },
+        {
+          "test_id": "ADV-008",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9923,
+            "probabilities": {
+              "contradiction": 0.0039,
+              "entailment": 0.0038,
+              "neutral": 0.9923
+            }
+          }
+        },
+        {
+          "test_id": "ADV-009",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.6771,
+            "probabilities": {
+              "contradiction": 0.3215,
+              "entailment": 0.0013,
+              "neutral": 0.6771
+            }
+          }
+        },
+        {
+          "test_id": "ADV-010",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9996,
+            "probabilities": {
+              "contradiction": 0.0003,
+              "entailment": 0.0001,
+              "neutral": 0.9996
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-001",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "supported",
+          "predicted": "needs_review",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.5939,
+            "probabilities": {
+              "contradiction": 0.002,
+              "entailment": 0.5939,
+              "neutral": 0.4041
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-002",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.7356,
+            "probabilities": {
+              "contradiction": 0.202,
+              "entailment": 0.0624,
+              "neutral": 0.7356
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-003",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9989,
+            "probabilities": {
+              "contradiction": 0.9989,
+              "entailment": 0.0002,
+              "neutral": 0.0009
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-004",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9933,
+            "probabilities": {
+              "contradiction": 0.9933,
+              "entailment": 0.0004,
+              "neutral": 0.0063
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-005",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9919,
+            "probabilities": {
+              "contradiction": 0.0001,
+              "entailment": 0.9919,
+              "neutral": 0.008
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-006",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "supported",
+          "predicted": "needs_review",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.638,
+            "probabilities": {
+              "contradiction": 0.0148,
+              "entailment": 0.638,
+              "neutral": 0.3472
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-007",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9758,
+            "probabilities": {
+              "contradiction": 0.024,
+              "entailment": 0.0002,
+              "neutral": 0.9758
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-008",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9995,
+            "probabilities": {
+              "contradiction": 0.0002,
+              "entailment": 0.0003,
+              "neutral": 0.9995
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-009",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9774,
+            "probabilities": {
+              "contradiction": 0.0204,
+              "entailment": 0.0022,
+              "neutral": 0.9774
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-010",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9215,
+            "probabilities": {
+              "contradiction": 0.0001,
+              "entailment": 0.9215,
+              "neutral": 0.0784
+            }
+          }
+        }
+      ]
+    },
+    "contradiction_aware": {
+      "metrics": {
+        "total": 25,
+        "exact_matches": 7,
+        "exact_match_rate": 0.28,
+        "unsafe_approvals": 0,
+        "false_rejections": 0,
+        "supported_approved": 6,
+        "unsupported_rejected": 1,
+        "abstentions": 18,
+        "abstention_rate": 0.72
+      },
+      "results": [
+        {
+          "test_id": "GROUND-001",
+          "dataset": "grounding_test_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.8189,
+            "probabilities": {
+              "contradiction": 0.0001,
+              "entailment": 0.8189,
+              "neutral": 0.181
+            }
+          }
+        },
+        {
+          "test_id": "GROUND-002",
+          "dataset": "grounding_test_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9983,
+            "probabilities": {
+              "contradiction": 0.0012,
+              "entailment": 0.0006,
+              "neutral": 0.9983
+            }
+          }
+        },
+        {
+          "test_id": "GROUND-003",
+          "dataset": "grounding_test_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9856,
+            "probabilities": {
+              "contradiction": 0.0011,
+              "entailment": 0.9856,
+              "neutral": 0.0133
+            }
+          }
+        },
+        {
+          "test_id": "GROUND-004",
+          "dataset": "grounding_test_cases.json",
+          "expected": "unsupported",
+          "predicted": "unsupported",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9798,
+            "probabilities": {
+              "contradiction": 0.9798,
+              "entailment": 0.0015,
+              "neutral": 0.0187
+            }
+          }
+        },
+        {
+          "test_id": "GROUND-005",
+          "dataset": "grounding_test_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9996,
+            "probabilities": {
+              "contradiction": 0.0003,
+              "entailment": 0.0001,
+              "neutral": 0.9996
+            }
+          }
+        },
+        {
+          "test_id": "ADV-001",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "supported",
+          "predicted": "needs_review",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.5939,
+            "probabilities": {
+              "contradiction": 0.002,
+              "entailment": 0.5939,
+              "neutral": 0.4041
+            }
+          }
+        },
+        {
+          "test_id": "ADV-002",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9904,
+            "probabilities": {
+              "contradiction": 0.0002,
+              "entailment": 0.0094,
+              "neutral": 0.9904
+            }
+          }
+        },
+        {
+          "test_id": "ADV-003",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.5644,
+            "probabilities": {
+              "contradiction": 0.5644,
+              "entailment": 0.0525,
+              "neutral": 0.3832
+            }
+          }
+        },
+        {
+          "test_id": "ADV-004",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9991,
+            "probabilities": {
+              "contradiction": 0.9991,
+              "entailment": 0.0,
+              "neutral": 0.0009
+            }
+          }
+        },
+        {
+          "test_id": "ADV-005",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9508,
+            "probabilities": {
+              "contradiction": 0.0023,
+              "entailment": 0.9508,
+              "neutral": 0.0469
+            }
+          }
+        },
+        {
+          "test_id": "ADV-006",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9987,
+            "probabilities": {
+              "contradiction": 0.9987,
+              "entailment": 0.0001,
+              "neutral": 0.0012
+            }
+          }
+        },
+        {
+          "test_id": "ADV-007",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9919,
+            "probabilities": {
+              "contradiction": 0.0001,
+              "entailment": 0.9919,
+              "neutral": 0.008
+            }
+          }
+        },
+        {
+          "test_id": "ADV-008",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9923,
+            "probabilities": {
+              "contradiction": 0.0039,
+              "entailment": 0.0038,
+              "neutral": 0.9923
+            }
+          }
+        },
+        {
+          "test_id": "ADV-009",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.6771,
+            "probabilities": {
+              "contradiction": 0.3215,
+              "entailment": 0.0013,
+              "neutral": 0.6771
+            }
+          }
+        },
+        {
+          "test_id": "ADV-010",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9996,
+            "probabilities": {
+              "contradiction": 0.0003,
+              "entailment": 0.0001,
+              "neutral": 0.9996
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-001",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "supported",
+          "predicted": "needs_review",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.5939,
+            "probabilities": {
+              "contradiction": 0.002,
+              "entailment": 0.5939,
+              "neutral": 0.4041
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-002",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.7356,
+            "probabilities": {
+              "contradiction": 0.202,
+              "entailment": 0.0624,
+              "neutral": 0.7356
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-003",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9989,
+            "probabilities": {
+              "contradiction": 0.9989,
+              "entailment": 0.0002,
+              "neutral": 0.0009
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-004",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9933,
+            "probabilities": {
+              "contradiction": 0.9933,
+              "entailment": 0.0004,
+              "neutral": 0.0063
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-005",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9919,
+            "probabilities": {
+              "contradiction": 0.0001,
+              "entailment": 0.9919,
+              "neutral": 0.008
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-006",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "supported",
+          "predicted": "needs_review",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.638,
+            "probabilities": {
+              "contradiction": 0.0148,
+              "entailment": 0.638,
+              "neutral": 0.3472
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-007",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9758,
+            "probabilities": {
+              "contradiction": 0.024,
+              "entailment": 0.0002,
+              "neutral": 0.9758
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-008",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9995,
+            "probabilities": {
+              "contradiction": 0.0002,
+              "entailment": 0.0003,
+              "neutral": 0.9995
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-009",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9774,
+            "probabilities": {
+              "contradiction": 0.0204,
+              "entailment": 0.0022,
+              "neutral": 0.9774
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-010",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9215,
+            "probabilities": {
+              "contradiction": 0.0001,
+              "entailment": 0.9215,
+              "neutral": 0.0784
+            }
+          }
+        }
+      ]
+    },
+    "balanced_experimental": {
+      "metrics": {
+        "total": 25,
+        "exact_matches": 10,
+        "exact_match_rate": 0.4,
+        "unsafe_approvals": 0,
+        "false_rejections": 0,
+        "supported_approved": 9,
+        "unsupported_rejected": 1,
+        "abstentions": 15,
+        "abstention_rate": 0.6
+      },
+      "results": [
+        {
+          "test_id": "GROUND-001",
+          "dataset": "grounding_test_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.8189,
+            "probabilities": {
+              "contradiction": 0.0001,
+              "entailment": 0.8189,
+              "neutral": 0.181
+            }
+          }
+        },
+        {
+          "test_id": "GROUND-002",
+          "dataset": "grounding_test_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9983,
+            "probabilities": {
+              "contradiction": 0.0012,
+              "entailment": 0.0006,
+              "neutral": 0.9983
+            }
+          }
+        },
+        {
+          "test_id": "GROUND-003",
+          "dataset": "grounding_test_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9856,
+            "probabilities": {
+              "contradiction": 0.0011,
+              "entailment": 0.9856,
+              "neutral": 0.0133
+            }
+          }
+        },
+        {
+          "test_id": "GROUND-004",
+          "dataset": "grounding_test_cases.json",
+          "expected": "unsupported",
+          "predicted": "unsupported",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9798,
+            "probabilities": {
+              "contradiction": 0.9798,
+              "entailment": 0.0015,
+              "neutral": 0.0187
+            }
+          }
+        },
+        {
+          "test_id": "GROUND-005",
+          "dataset": "grounding_test_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9996,
+            "probabilities": {
+              "contradiction": 0.0003,
+              "entailment": 0.0001,
+              "neutral": 0.9996
+            }
+          }
+        },
+        {
+          "test_id": "ADV-001",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.5939,
+            "probabilities": {
+              "contradiction": 0.002,
+              "entailment": 0.5939,
+              "neutral": 0.4041
+            }
+          }
+        },
+        {
+          "test_id": "ADV-002",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9904,
+            "probabilities": {
+              "contradiction": 0.0002,
+              "entailment": 0.0094,
+              "neutral": 0.9904
+            }
+          }
+        },
+        {
+          "test_id": "ADV-003",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.5644,
+            "probabilities": {
+              "contradiction": 0.5644,
+              "entailment": 0.0525,
+              "neutral": 0.3832
+            }
+          }
+        },
+        {
+          "test_id": "ADV-004",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9991,
+            "probabilities": {
+              "contradiction": 0.9991,
+              "entailment": 0.0,
+              "neutral": 0.0009
+            }
+          }
+        },
+        {
+          "test_id": "ADV-005",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9508,
+            "probabilities": {
+              "contradiction": 0.0023,
+              "entailment": 0.9508,
+              "neutral": 0.0469
+            }
+          }
+        },
+        {
+          "test_id": "ADV-006",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9987,
+            "probabilities": {
+              "contradiction": 0.9987,
+              "entailment": 0.0001,
+              "neutral": 0.0012
+            }
+          }
+        },
+        {
+          "test_id": "ADV-007",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9919,
+            "probabilities": {
+              "contradiction": 0.0001,
+              "entailment": 0.9919,
+              "neutral": 0.008
+            }
+          }
+        },
+        {
+          "test_id": "ADV-008",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9923,
+            "probabilities": {
+              "contradiction": 0.0039,
+              "entailment": 0.0038,
+              "neutral": 0.9923
+            }
+          }
+        },
+        {
+          "test_id": "ADV-009",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.6771,
+            "probabilities": {
+              "contradiction": 0.3215,
+              "entailment": 0.0013,
+              "neutral": 0.6771
+            }
+          }
+        },
+        {
+          "test_id": "ADV-010",
+          "dataset": "adversarial_grounding_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "unsupported",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9996,
+            "probabilities": {
+              "contradiction": 0.0003,
+              "entailment": 0.0001,
+              "neutral": 0.9996
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-001",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.5939,
+            "probabilities": {
+              "contradiction": 0.002,
+              "entailment": 0.5939,
+              "neutral": 0.4041
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-002",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.7356,
+            "probabilities": {
+              "contradiction": 0.202,
+              "entailment": 0.0624,
+              "neutral": 0.7356
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-003",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9989,
+            "probabilities": {
+              "contradiction": 0.9989,
+              "entailment": 0.0002,
+              "neutral": 0.0009
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-004",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "contradiction",
+            "confidence": 0.9933,
+            "probabilities": {
+              "contradiction": 0.9933,
+              "entailment": 0.0004,
+              "neutral": 0.0063
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-005",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9919,
+            "probabilities": {
+              "contradiction": 0.0001,
+              "entailment": 0.9919,
+              "neutral": 0.008
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-006",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.638,
+            "probabilities": {
+              "contradiction": 0.0148,
+              "entailment": 0.638,
+              "neutral": 0.3472
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-007",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9758,
+            "probabilities": {
+              "contradiction": 0.024,
+              "entailment": 0.0002,
+              "neutral": 0.9758
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-008",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9995,
+            "probabilities": {
+              "contradiction": 0.0002,
+              "entailment": 0.0003,
+              "neutral": 0.9995
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-009",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "unsupported",
+          "predicted": "needs_review",
+          "rule_status": "needs_review",
+          "nli": {
+            "label": "neutral",
+            "confidence": 0.9774,
+            "probabilities": {
+              "contradiction": 0.0204,
+              "entailment": 0.0022,
+              "neutral": 0.9774
+            }
+          }
+        },
+        {
+          "test_id": "UNSEEN-010",
+          "dataset": "unseen_adversarial_cases.json",
+          "expected": "supported",
+          "predicted": "supported",
+          "rule_status": "supported",
+          "nli": {
+            "label": "entailment",
+            "confidence": 0.9215,
+            "probabilities": {
+              "contradiction": 0.0001,
+              "entailment": 0.9215,
+              "neutral": 0.0784
+            }
+          }
+        }
+      ]
+    }
+  }
+}
