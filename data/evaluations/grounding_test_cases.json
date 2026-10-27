@@ -1,0 +1,38 @@
+
+[
+  {
+    "test_id": "GROUND-001",
+    "claim": "The minimum corporate password length is 14 characters.",
+    "cited_document": "POL-002",
+    "expected_result": "supported",
+    "reason": "Password policy contains the 14-character requirement."
+  },
+  {
+    "test_id": "GROUND-002",
+    "claim": "Employees must use an approved VPN for remote access.",
+    "cited_document": "POL-001",
+    "expected_result": "unsupported",
+    "reason": "MFA policy is not the remote access policy."
+  },
+  {
+    "test_id": "GROUND-003",
+    "claim": "Unexpected MFA requests must be reported to the security team.",
+    "cited_document": "POL-001",
+    "expected_result": "supported",
+    "reason": "MFA policy provides reporting instructions."
+  },
+  {
+    "test_id": "GROUND-004",
+    "claim": "Corporate passwords must contain at least 30 characters.",
+    "cited_document": "POL-002",
+    "expected_result": "unsupported",
+    "reason": "The company policy specifies 14 characters."
+  },
+  {
+    "test_id": "GROUND-005",
+    "claim": "Employees should contact the security team within exactly 17 minutes.",
+    "cited_document": "POL-003",
+    "expected_result": "unsupported",
+    "reason": "The claim introduces an unsupported exact time requirement."
+  }
+]

@@ -1,0 +1,57 @@
+{
+  "experiment": "18_grounding_verification",
+  "method": "Deterministic policy-specific baseline",
+  "total": 5,
+  "passed": 5,
+  "status_counts": {
+    "supported": 2,
+    "unsupported": 3
+  },
+  "results": [
+    {
+      "test_id": "GROUND-001",
+      "claim": "The minimum corporate password length is 14 characters.",
+      "cited_document": "POL-002",
+      "expected": "supported",
+      "predicted": "supported",
+      "passed": true,
+      "reason": "Claim matches the configured password-length requirement."
+    },
+    {
+      "test_id": "GROUND-002",
+      "claim": "Employees must use an approved VPN for remote access.",
+      "cited_document": "POL-001",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "passed": true,
+      "reason": "Incorrect source for remote access."
+    },
+    {
+      "test_id": "GROUND-003",
+      "claim": "Unexpected MFA requests must be reported to the security team.",
+      "cited_document": "POL-001",
+      "expected": "supported",
+      "predicted": "supported",
+      "passed": true,
+      "reason": "Reporting instruction matches the MFA policy."
+    },
+    {
+      "test_id": "GROUND-004",
+      "claim": "Corporate passwords must contain at least 30 characters.",
+      "cited_document": "POL-002",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "passed": true,
+      "reason": "Password-length claim not established."
+    },
+    {
+      "test_id": "GROUND-005",
+      "claim": "Employees should contact the security team within exactly 17 minutes.",
+      "cited_document": "POL-003",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "passed": true,
+      "reason": "Exact time requirements require explicit verification."
+    }
+  ]
+}
