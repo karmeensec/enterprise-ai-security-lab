@@ -67,17 +67,34 @@ def verify_grounding(
             "Unverified exact deadline."
         )
 
-    # Detect common negation patterns before keyword matching.
-    if re.search(
-        r"\b(?:never|must not|should not|do not|cannot)\b",
-        text
+    
+    # Detect explicit negation of security requirements.
+    # This is intentionally conservative and not a
+    # general-purpose natural language understanding system.
+    negation_patterns = [
+        r"\bnever\b",
+        r"\bmust not\b",
+        r"\bshould not\b",
+        r"\bdo not\b",
+        r"\bcannot\b",
+        r"\bnot required\b",
+        r"\bnot mandatory\b",
+        r"\bno need to\b",
+        r"\bis not necessary\b",
+        r"\bare not necessary\b",
+    ]
+
+    if any(
+        re.search(pattern, text)
+        for pattern in negation_patterns
     ):
         return verdict(
-            "unsupported",
+            "needs_review",
             cited_document,
-            "Claim contains a prohibition that conflicts "
-            "with the tested positive policy requirement."
+            "Negation detected; automatic support "
+            "approval withheld pending review."
         )
+
 
     # Password policy
     if "password" in text:

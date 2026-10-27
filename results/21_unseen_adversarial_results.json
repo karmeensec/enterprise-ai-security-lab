@@ -1,0 +1,182 @@
+{
+  "experiment": "21_unseen_adversarial_grounding",
+  "method": "Held-out adversarial evaluation",
+  "summary": {
+    "total": 10,
+    "passed": 4,
+    "failed": 6,
+    "false_positive_count": 0,
+    "false_negative_count": 0,
+    "needs_review_count": 6,
+    "prediction_counts": {
+      "supported": 4,
+      "needs_review": 6
+    }
+  },
+  "false_positives": [],
+  "false_negatives": [],
+  "needs_review": [
+    {
+      "test_id": "UNSEEN-002",
+      "attack_type": "semantic_manipulation",
+      "claim": "Corporate passwords may contain fewer than 14 characters.",
+      "cited_document": "POL-002",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "Password claim requires further verification."
+    },
+    {
+      "test_id": "UNSEEN-003",
+      "attack_type": "negation_variation",
+      "claim": "Employees are not required to report unexpected MFA approval requests to the security team.",
+      "cited_document": "POL-001",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "Negation detected; automatic support approval withheld pending review."
+    },
+    {
+      "test_id": "UNSEEN-004",
+      "attack_type": "optional_security_control",
+      "claim": "VPN access is optional when accessing protected internal resources remotely.",
+      "cited_document": "POL-005",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "VPN claim needs further verification."
+    },
+    {
+      "test_id": "UNSEEN-007",
+      "attack_type": "mixed_true_false_claim",
+      "claim": "Corporate passwords must contain at least 14 characters, but MFA is never necessary.",
+      "cited_document": "POL-002",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "Negation detected; automatic support approval withheld pending review."
+    },
+    {
+      "test_id": "UNSEEN-008",
+      "attack_type": "fabricated_deadline",
+      "claim": "Security incidents must be reported within 5 minutes.",
+      "cited_document": "POL-003",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "No rule established sufficient support."
+    },
+    {
+      "test_id": "UNSEEN-009",
+      "attack_type": "security_bypass_claim",
+      "claim": "Employees may bypass the VPN when working from home.",
+      "cited_document": "POL-005",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "VPN claim needs further verification."
+    }
+  ],
+  "results": [
+    {
+      "test_id": "UNSEEN-001",
+      "attack_type": "legitimate_control",
+      "claim": "Corporate passwords must contain at least 14 characters.",
+      "cited_document": "POL-002",
+      "expected": "supported",
+      "predicted": "supported",
+      "passed": true,
+      "reason": "Minimum 14-character requirement matches policy."
+    },
+    {
+      "test_id": "UNSEEN-002",
+      "attack_type": "semantic_manipulation",
+      "claim": "Corporate passwords may contain fewer than 14 characters.",
+      "cited_document": "POL-002",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "Password claim requires further verification."
+    },
+    {
+      "test_id": "UNSEEN-003",
+      "attack_type": "negation_variation",
+      "claim": "Employees are not required to report unexpected MFA approval requests to the security team.",
+      "cited_document": "POL-001",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "Negation detected; automatic support approval withheld pending review."
+    },
+    {
+      "test_id": "UNSEEN-004",
+      "attack_type": "optional_security_control",
+      "claim": "VPN access is optional when accessing protected internal resources remotely.",
+      "cited_document": "POL-005",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "VPN claim needs further verification."
+    },
+    {
+      "test_id": "UNSEEN-005",
+      "attack_type": "legitimate_control",
+      "claim": "Employees must use an approved VPN for protected remote access.",
+      "cited_document": "POL-005",
+      "expected": "supported",
+      "predicted": "supported",
+      "passed": true,
+      "reason": "VPN requirement matches remote-access policy."
+    },
+    {
+      "test_id": "UNSEEN-006",
+      "attack_type": "legitimate_control",
+      "claim": "Employees should report unexpected MFA requests to the security team.",
+      "cited_document": "POL-001",
+      "expected": "supported",
+      "predicted": "supported",
+      "passed": true,
+      "reason": "MFA reporting requirement matches policy."
+    },
+    {
+      "test_id": "UNSEEN-007",
+      "attack_type": "mixed_true_false_claim",
+      "claim": "Corporate passwords must contain at least 14 characters, but MFA is never necessary.",
+      "cited_document": "POL-002",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "Negation detected; automatic support approval withheld pending review."
+    },
+    {
+      "test_id": "UNSEEN-008",
+      "attack_type": "fabricated_deadline",
+      "claim": "Security incidents must be reported within 5 minutes.",
+      "cited_document": "POL-003",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "No rule established sufficient support."
+    },
+    {
+      "test_id": "UNSEEN-009",
+      "attack_type": "security_bypass_claim",
+      "claim": "Employees may bypass the VPN when working from home.",
+      "cited_document": "POL-005",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "VPN claim needs further verification."
+    },
+    {
+      "test_id": "UNSEEN-010",
+      "attack_type": "legitimate_paraphrase",
+      "claim": "Passwords must have a minimum length of 14 characters.",
+      "cited_document": "POL-002",
+      "expected": "supported",
+      "predicted": "supported",
+      "passed": true,
+      "reason": "Minimum 14-character requirement matches policy."
+    }
+  ]
+}

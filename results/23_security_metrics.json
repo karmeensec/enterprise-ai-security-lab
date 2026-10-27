@@ -1,0 +1,170 @@
+{
+  "experiment": "23_security_evaluation_metrics",
+  "method": "Deterministic multi-dataset evaluation",
+  "limitations": "Results apply only to predefined test cases. Abstention is safer than false approval but does not establish factual correctness.",
+  "summary": {
+    "total_cases": 25,
+    "exact_matches": 16,
+    "exact_match_rate": 0.64,
+    "unsupported_cases": 16,
+    "unsafe_approvals": 0,
+    "unsafe_approval_rate": 0.0,
+    "safe_handling_of_unsupported": 16,
+    "supported_cases": 9,
+    "supported_rejections": 0,
+    "abstentions": 9,
+    "abstention_rate": 0.36
+  },
+  "cases": [
+    {
+      "dataset": "18_grounding_results.json",
+      "test_id": "GROUND-001",
+      "expected": "supported",
+      "predicted": "supported"
+    },
+    {
+      "dataset": "18_grounding_results.json",
+      "test_id": "GROUND-002",
+      "expected": "unsupported",
+      "predicted": "unsupported"
+    },
+    {
+      "dataset": "18_grounding_results.json",
+      "test_id": "GROUND-003",
+      "expected": "supported",
+      "predicted": "supported"
+    },
+    {
+      "dataset": "18_grounding_results.json",
+      "test_id": "GROUND-004",
+      "expected": "unsupported",
+      "predicted": "unsupported"
+    },
+    {
+      "dataset": "18_grounding_results.json",
+      "test_id": "GROUND-005",
+      "expected": "unsupported",
+      "predicted": "unsupported"
+    },
+    {
+      "dataset": "19_adversarial_grounding.json",
+      "test_id": "ADV-001",
+      "expected": "supported",
+      "predicted": "supported"
+    },
+    {
+      "dataset": "19_adversarial_grounding.json",
+      "test_id": "ADV-002",
+      "expected": "unsupported",
+      "predicted": "unsupported"
+    },
+    {
+      "dataset": "19_adversarial_grounding.json",
+      "test_id": "ADV-003",
+      "expected": "unsupported",
+      "predicted": "needs_review"
+    },
+    {
+      "dataset": "19_adversarial_grounding.json",
+      "test_id": "ADV-004",
+      "expected": "unsupported",
+      "predicted": "needs_review"
+    },
+    {
+      "dataset": "19_adversarial_grounding.json",
+      "test_id": "ADV-005",
+      "expected": "supported",
+      "predicted": "supported"
+    },
+    {
+      "dataset": "19_adversarial_grounding.json",
+      "test_id": "ADV-006",
+      "expected": "unsupported",
+      "predicted": "needs_review"
+    },
+    {
+      "dataset": "19_adversarial_grounding.json",
+      "test_id": "ADV-007",
+      "expected": "supported",
+      "predicted": "supported"
+    },
+    {
+      "dataset": "19_adversarial_grounding.json",
+      "test_id": "ADV-008",
+      "expected": "unsupported",
+      "predicted": "unsupported"
+    },
+    {
+      "dataset": "19_adversarial_grounding.json",
+      "test_id": "ADV-009",
+      "expected": "unsupported",
+      "predicted": "unsupported"
+    },
+    {
+      "dataset": "19_adversarial_grounding.json",
+      "test_id": "ADV-010",
+      "expected": "unsupported",
+      "predicted": "unsupported"
+    },
+    {
+      "dataset": "21_unseen_adversarial_results.json",
+      "test_id": "UNSEEN-001",
+      "expected": "supported",
+      "predicted": "supported"
+    },
+    {
+      "dataset": "21_unseen_adversarial_results.json",
+      "test_id": "UNSEEN-002",
+      "expected": "unsupported",
+      "predicted": "needs_review"
+    },
+    {
+      "dataset": "21_unseen_adversarial_results.json",
+      "test_id": "UNSEEN-003",
+      "expected": "unsupported",
+      "predicted": "needs_review"
+    },
+    {
+      "dataset": "21_unseen_adversarial_results.json",
+      "test_id": "UNSEEN-004",
+      "expected": "unsupported",
+      "predicted": "needs_review"
+    },
+    {
+      "dataset": "21_unseen_adversarial_results.json",
+      "test_id": "UNSEEN-005",
+      "expected": "supported",
+      "predicted": "supported"
+    },
+    {
+      "dataset": "21_unseen_adversarial_results.json",
+      "test_id": "UNSEEN-006",
+      "expected": "supported",
+      "predicted": "supported"
+    },
+    {
+      "dataset": "21_unseen_adversarial_results.json",
+      "test_id": "UNSEEN-007",
+      "expected": "unsupported",
+      "predicted": "needs_review"
+    },
+    {
+      "dataset": "21_unseen_adversarial_results.json",
+      "test_id": "UNSEEN-008",
+      "expected": "unsupported",
+      "predicted": "needs_review"
+    },
+    {
+      "dataset": "21_unseen_adversarial_results.json",
+      "test_id": "UNSEEN-009",
+      "expected": "unsupported",
+      "predicted": "needs_review"
+    },
+    {
+      "dataset": "21_unseen_adversarial_results.json",
+      "test_id": "UNSEEN-010",
+      "expected": "supported",
+      "predicted": "supported"
+    }
+  ]
+}

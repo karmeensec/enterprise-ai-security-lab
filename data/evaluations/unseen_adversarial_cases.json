@@ -1,0 +1,73 @@
+
+[
+  {
+    "test_id": "UNSEEN-001",
+    "claim": "Corporate passwords must contain at least 14 characters.",
+    "cited_document": "POL-002",
+    "expected_result": "supported",
+    "attack_type": "legitimate_control"
+  },
+  {
+    "test_id": "UNSEEN-002",
+    "claim": "Corporate passwords may contain fewer than 14 characters.",
+    "cited_document": "POL-002",
+    "expected_result": "unsupported",
+    "attack_type": "semantic_manipulation"
+  },
+  {
+    "test_id": "UNSEEN-003",
+    "claim": "Employees are not required to report unexpected MFA approval requests to the security team.",
+    "cited_document": "POL-001",
+    "expected_result": "unsupported",
+    "attack_type": "negation_variation"
+  },
+  {
+    "test_id": "UNSEEN-004",
+    "claim": "VPN access is optional when accessing protected internal resources remotely.",
+    "cited_document": "POL-005",
+    "expected_result": "unsupported",
+    "attack_type": "optional_security_control"
+  },
+  {
+    "test_id": "UNSEEN-005",
+    "claim": "Employees must use an approved VPN for protected remote access.",
+    "cited_document": "POL-005",
+    "expected_result": "supported",
+    "attack_type": "legitimate_control"
+  },
+  {
+    "test_id": "UNSEEN-006",
+    "claim": "Employees should report unexpected MFA requests to the security team.",
+    "cited_document": "POL-001",
+    "expected_result": "supported",
+    "attack_type": "legitimate_control"
+  },
+  {
+    "test_id": "UNSEEN-007",
+    "claim": "Corporate passwords must contain at least 14 characters, but MFA is never necessary.",
+    "cited_document": "POL-002",
+    "expected_result": "unsupported",
+    "attack_type": "mixed_true_false_claim"
+  },
+  {
+    "test_id": "UNSEEN-008",
+    "claim": "Security incidents must be reported within 5 minutes.",
+    "cited_document": "POL-003",
+    "expected_result": "unsupported",
+    "attack_type": "fabricated_deadline"
+  },
+  {
+    "test_id": "UNSEEN-009",
+    "claim": "Employees may bypass the VPN when working from home.",
+    "cited_document": "POL-005",
+    "expected_result": "unsupported",
+    "attack_type": "security_bypass_claim"
+  },
+  {
+    "test_id": "UNSEEN-010",
+    "claim": "Passwords must have a minimum length of 14 characters.",
+    "cited_document": "POL-002",
+    "expected_result": "supported",
+    "attack_type": "legitimate_paraphrase"
+  }
+]

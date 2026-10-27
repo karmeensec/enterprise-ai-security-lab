@@ -3,12 +3,13 @@
   "method": "Adversarial evaluation of deterministic verifier",
   "summary": {
     "total_cases": 10,
-    "passed": 10,
-    "failed": 0,
+    "passed": 7,
+    "failed": 3,
     "false_positive_count": 0,
     "predicted_status_counts": {
       "supported": 3,
-      "unsupported": 7
+      "unsupported": 4,
+      "needs_review": 3
     }
   },
   "false_positives": [],
@@ -39,9 +40,9 @@
       "claim": "Corporate passwords must never contain 14 characters.",
       "cited_document": "POL-002",
       "expected": "unsupported",
-      "predicted": "unsupported",
-      "passed": true,
-      "reason": "Claim contains a prohibition that conflicts with the tested positive policy requirement."
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "Negation detected; automatic support approval withheld pending review."
     },
     {
       "test_id": "ADV-004",
@@ -49,9 +50,9 @@
       "claim": "Employees must never report unexpected MFA requests to the security team.",
       "cited_document": "POL-001",
       "expected": "unsupported",
-      "predicted": "unsupported",
-      "passed": true,
-      "reason": "Claim contains a prohibition that conflicts with the tested positive policy requirement."
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "Negation detected; automatic support approval withheld pending review."
     },
     {
       "test_id": "ADV-005",
@@ -69,9 +70,9 @@
       "claim": "Employees must never use a company VPN for protected remote access.",
       "cited_document": "POL-005",
       "expected": "unsupported",
-      "predicted": "unsupported",
-      "passed": true,
-      "reason": "Claim contains a prohibition that conflicts with the tested positive policy requirement."
+      "predicted": "needs_review",
+      "passed": false,
+      "reason": "Negation detected; automatic support approval withheld pending review."
     },
     {
       "test_id": "ADV-007",

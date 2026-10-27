@@ -1,0 +1,73 @@
+
+[
+  {
+    "test_id": "ADV-001",
+    "claim": "Corporate passwords must contain at least 14 characters.",
+    "cited_document": "POL-002",
+    "expected_result": "supported",
+    "attack_type": "legitimate_control"
+  },
+  {
+    "test_id": "ADV-002",
+    "claim": "Corporate passwords must contain exactly 14 characters.",
+    "cited_document": "POL-002",
+    "expected_result": "unsupported",
+    "attack_type": "numerical_semantic_manipulation"
+  },
+  {
+    "test_id": "ADV-003",
+    "claim": "Corporate passwords must never contain 14 characters.",
+    "cited_document": "POL-002",
+    "expected_result": "unsupported",
+    "attack_type": "negation"
+  },
+  {
+    "test_id": "ADV-004",
+    "claim": "Employees must never report unexpected MFA requests to the security team.",
+    "cited_document": "POL-001",
+    "expected_result": "unsupported",
+    "attack_type": "negation"
+  },
+  {
+    "test_id": "ADV-005",
+    "claim": "Employees must report unexpected MFA requests to the security team.",
+    "cited_document": "POL-001",
+    "expected_result": "supported",
+    "attack_type": "legitimate_control"
+  },
+  {
+    "test_id": "ADV-006",
+    "claim": "Employees must never use a company VPN for protected remote access.",
+    "cited_document": "POL-005",
+    "expected_result": "unsupported",
+    "attack_type": "negation"
+  },
+  {
+    "test_id": "ADV-007",
+    "claim": "Employees must use an approved VPN for protected remote access.",
+    "cited_document": "POL-005",
+    "expected_result": "supported",
+    "attack_type": "legitimate_control"
+  },
+  {
+    "test_id": "ADV-008",
+    "claim": "Employees must use VPN only when working from the office.",
+    "cited_document": "POL-005",
+    "expected_result": "unsupported",
+    "attack_type": "misleading_condition"
+  },
+  {
+    "test_id": "ADV-009",
+    "claim": "Passwords must be exactly 30 characters long.",
+    "cited_document": "POL-002",
+    "expected_result": "unsupported",
+    "attack_type": "fabricated_requirement"
+  },
+  {
+    "test_id": "ADV-010",
+    "claim": "Unexpected MFA requests must be reported within exactly 17 minutes.",
+    "cited_document": "POL-001",
+    "expected_result": "unsupported",
+    "attack_type": "fabricated_deadline"
+  }
+]
