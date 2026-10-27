@@ -16,6 +16,9 @@ from backend.llm_service import (
 from backend.retrieval_service import get_retrieval_service
 from backend.citation_validator import validate_citations
 
+from backend.security_service import AISecurityService
+from backend.grounding_validator import load_policies
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("enterprise_ai_security_lab")
@@ -67,6 +70,27 @@ class RAGChatResponse(ChatResponse):
     sources: list[SourceDocument]
     retrieval_count: int
     citation_validation: CitationValidation
+
+
+class SecurityEvaluationRequest(BaseModel):
+    claim: str = Field(min_length=1, max_length=2000)
+    cited_document: str = Field(min_length=1, max_length=100)
+    retrieved_document_ids: list[str] = Field(
+        min_length=1,
+        max_length=20,
+    )
+
+
+class SecurityEvaluationResponse(BaseModel):
+    request_id: str
+    citation_validation: dict
+    grounding_validation: dict
+    decision: str
+    review_required: bool
+
+
+def get_security_service():
+    return AISecurityService()
 
 
 
@@ -240,3 +264,42 @@ def rag_chat(
         retrieval_count=len(sources),
         citation_validation=CitationValidation(**citation_result),
     )
+
+
+
+@app.post(
+    "/security/evaluate",
+    response_model=SecurityEvaluationResponse,
+)
+def evaluate_security(
+    request: SecurityEvaluationRequest,
+    http_request: Request,
+    service: AISecurityService = Depends(get_security_service),
+):
+    request_id = http_request.state.request_id
+
+    try:
+        policies = load_policies()
+
+        assessment = service.assess_claim(
+            claim=request.claim,
+            cited_document=request.cited_document,
+            retrieved_document_ids=request.retrieved_document_ids,
+            known_document_ids=list(policies.keys()),
+        )
+
+        return SecurityEvaluationResponse(
+            request_id=request_id,
+            **assessment.to_dict(),
+        )
+
+    except Exception:
+        logger.exception(
+            "Security evaluation failed request_id=%s",
+            request_id,
+        )
+
+        raise HTTPException(
+            status_code=503,
+            detail="Security evaluation temporarily unavailable",
+        )
