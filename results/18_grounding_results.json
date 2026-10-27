@@ -15,7 +15,7 @@
       "expected": "supported",
       "predicted": "supported",
       "passed": true,
-      "reason": "Claim matches the configured password-length requirement."
+      "reason": "Minimum 14-character requirement matches policy."
     },
     {
       "test_id": "GROUND-002",
@@ -24,7 +24,7 @@
       "expected": "unsupported",
       "predicted": "unsupported",
       "passed": true,
-      "reason": "Incorrect source for remote access."
+      "reason": "Incorrect remote-access source."
     },
     {
       "test_id": "GROUND-003",
@@ -33,7 +33,7 @@
       "expected": "supported",
       "predicted": "supported",
       "passed": true,
-      "reason": "Reporting instruction matches the MFA policy."
+      "reason": "MFA reporting requirement matches policy."
     },
     {
       "test_id": "GROUND-004",
@@ -42,7 +42,7 @@
       "expected": "unsupported",
       "predicted": "unsupported",
       "passed": true,
-      "reason": "Password-length claim not established."
+      "reason": "Password length differs from policy."
     },
     {
       "test_id": "GROUND-005",
@@ -51,7 +51,7 @@
       "expected": "unsupported",
       "predicted": "unsupported",
       "passed": true,
-      "reason": "Exact time requirements require explicit verification."
+      "reason": "Unverified exact deadline."
     }
   ]
 }

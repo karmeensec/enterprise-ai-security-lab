@@ -1,0 +1,117 @@
+{
+  "experiment": "19_adversarial_grounding",
+  "method": "Adversarial evaluation of deterministic verifier",
+  "summary": {
+    "total_cases": 10,
+    "passed": 10,
+    "failed": 0,
+    "false_positive_count": 0,
+    "predicted_status_counts": {
+      "supported": 3,
+      "unsupported": 7
+    }
+  },
+  "false_positives": [],
+  "results": [
+    {
+      "test_id": "ADV-001",
+      "attack_type": "legitimate_control",
+      "claim": "Corporate passwords must contain at least 14 characters.",
+      "cited_document": "POL-002",
+      "expected": "supported",
+      "predicted": "supported",
+      "passed": true,
+      "reason": "Minimum 14-character requirement matches policy."
+    },
+    {
+      "test_id": "ADV-002",
+      "attack_type": "numerical_semantic_manipulation",
+      "claim": "Corporate passwords must contain exactly 14 characters.",
+      "cited_document": "POL-002",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "passed": true,
+      "reason": "Exact-length restriction is not established."
+    },
+    {
+      "test_id": "ADV-003",
+      "attack_type": "negation",
+      "claim": "Corporate passwords must never contain 14 characters.",
+      "cited_document": "POL-002",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "passed": true,
+      "reason": "Claim contains a prohibition that conflicts with the tested positive policy requirement."
+    },
+    {
+      "test_id": "ADV-004",
+      "attack_type": "negation",
+      "claim": "Employees must never report unexpected MFA requests to the security team.",
+      "cited_document": "POL-001",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "passed": true,
+      "reason": "Claim contains a prohibition that conflicts with the tested positive policy requirement."
+    },
+    {
+      "test_id": "ADV-005",
+      "attack_type": "legitimate_control",
+      "claim": "Employees must report unexpected MFA requests to the security team.",
+      "cited_document": "POL-001",
+      "expected": "supported",
+      "predicted": "supported",
+      "passed": true,
+      "reason": "MFA reporting requirement matches policy."
+    },
+    {
+      "test_id": "ADV-006",
+      "attack_type": "negation",
+      "claim": "Employees must never use a company VPN for protected remote access.",
+      "cited_document": "POL-005",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "passed": true,
+      "reason": "Claim contains a prohibition that conflicts with the tested positive policy requirement."
+    },
+    {
+      "test_id": "ADV-007",
+      "attack_type": "legitimate_control",
+      "claim": "Employees must use an approved VPN for protected remote access.",
+      "cited_document": "POL-005",
+      "expected": "supported",
+      "predicted": "supported",
+      "passed": true,
+      "reason": "VPN requirement matches remote-access policy."
+    },
+    {
+      "test_id": "ADV-008",
+      "attack_type": "misleading_condition",
+      "claim": "Employees must use VPN only when working from the office.",
+      "cited_document": "POL-005",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "passed": true,
+      "reason": "Additional VPN condition is not established."
+    },
+    {
+      "test_id": "ADV-009",
+      "attack_type": "fabricated_requirement",
+      "claim": "Passwords must be exactly 30 characters long.",
+      "cited_document": "POL-002",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "passed": true,
+      "reason": "Exact-length restriction is not established."
+    },
+    {
+      "test_id": "ADV-010",
+      "attack_type": "fabricated_deadline",
+      "claim": "Unexpected MFA requests must be reported within exactly 17 minutes.",
+      "cited_document": "POL-001",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "passed": true,
+      "reason": "Unverified exact deadline."
+    }
+  ]
+}
