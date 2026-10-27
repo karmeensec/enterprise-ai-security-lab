@@ -1,0 +1,548 @@
+{
+  "experiment": "26_hybrid_grounding_evaluation",
+  "method": "Conservative rule-based plus NLI verification",
+  "limitations": "These are small, development-influenced test datasets. NLI probabilities are not calibrated security guarantees. Abstention does not prove that a claim is false.",
+  "summary": {
+    "total_cases": 25,
+    "exact_matches": 7,
+    "exact_match_rate": 0.28,
+    "supported_cases": 9,
+    "unsupported_cases": 16,
+    "unsafe_approvals": 0,
+    "false_rejections": 0,
+    "abstentions": 18,
+    "abstention_rate": 0.72,
+    "prediction_counts": {
+      "supported": 6,
+      "needs_review": 18,
+      "unsupported": 1
+    }
+  },
+  "results": [
+    {
+      "dataset": "grounding_test_cases.json",
+      "test_id": "GROUND-001",
+      "claim": "The minimum corporate password length is 14 characters.",
+      "expected": "supported",
+      "predicted": "supported",
+      "exact_match": true,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "supported",
+      "nli": {
+        "label": "entailment",
+        "confidence": 0.8189,
+        "probabilities": {
+          "contradiction": 0.0001,
+          "entailment": 0.8189,
+          "neutral": 0.181
+        }
+      },
+      "reason": "Rule-based and NLI checks agree on support."
+    },
+    {
+      "dataset": "grounding_test_cases.json",
+      "test_id": "GROUND-002",
+      "claim": "Employees must use an approved VPN for remote access.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "unsupported",
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.9983,
+        "probabilities": {
+          "contradiction": 0.0012,
+          "entailment": 0.0006,
+          "neutral": 0.9983
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "grounding_test_cases.json",
+      "test_id": "GROUND-003",
+      "claim": "Unexpected MFA requests must be reported to the security team.",
+      "expected": "supported",
+      "predicted": "supported",
+      "exact_match": true,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "supported",
+      "nli": {
+        "label": "entailment",
+        "confidence": 0.9856,
+        "probabilities": {
+          "contradiction": 0.0011,
+          "entailment": 0.9856,
+          "neutral": 0.0133
+        }
+      },
+      "reason": "Rule-based and NLI checks agree on support."
+    },
+    {
+      "dataset": "grounding_test_cases.json",
+      "test_id": "GROUND-004",
+      "claim": "Corporate passwords must contain at least 30 characters.",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "exact_match": true,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "unsupported",
+      "nli": {
+        "label": "contradiction",
+        "confidence": 0.9798,
+        "probabilities": {
+          "contradiction": 0.9798,
+          "entailment": 0.0015,
+          "neutral": 0.0187
+        }
+      },
+      "reason": "Rule-based and NLI checks agree on contradiction."
+    },
+    {
+      "dataset": "grounding_test_cases.json",
+      "test_id": "GROUND-005",
+      "claim": "Employees should contact the security team within exactly 17 minutes.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "unsupported",
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.9996,
+        "probabilities": {
+          "contradiction": 0.0003,
+          "entailment": 0.0001,
+          "neutral": 0.9996
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "adversarial_grounding_cases.json",
+      "test_id": "ADV-001",
+      "claim": "Corporate passwords must contain at least 14 characters.",
+      "expected": "supported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "supported",
+      "nli": {
+        "label": "entailment",
+        "confidence": 0.5939,
+        "probabilities": {
+          "contradiction": 0.002,
+          "entailment": 0.5939,
+          "neutral": 0.4041
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "adversarial_grounding_cases.json",
+      "test_id": "ADV-002",
+      "claim": "Corporate passwords must contain exactly 14 characters.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "unsupported",
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.9904,
+        "probabilities": {
+          "contradiction": 0.0002,
+          "entailment": 0.0094,
+          "neutral": 0.9904
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "adversarial_grounding_cases.json",
+      "test_id": "ADV-003",
+      "claim": "Corporate passwords must never contain 14 characters.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "needs_review",
+      "nli": {
+        "label": "contradiction",
+        "confidence": 0.5644,
+        "probabilities": {
+          "contradiction": 0.5644,
+          "entailment": 0.0525,
+          "neutral": 0.3832
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "adversarial_grounding_cases.json",
+      "test_id": "ADV-004",
+      "claim": "Employees must never report unexpected MFA requests to the security team.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "needs_review",
+      "nli": {
+        "label": "contradiction",
+        "confidence": 0.9991,
+        "probabilities": {
+          "contradiction": 0.9991,
+          "entailment": 0.0,
+          "neutral": 0.0009
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "adversarial_grounding_cases.json",
+      "test_id": "ADV-005",
+      "claim": "Employees must report unexpected MFA requests to the security team.",
+      "expected": "supported",
+      "predicted": "supported",
+      "exact_match": true,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "supported",
+      "nli": {
+        "label": "entailment",
+        "confidence": 0.9508,
+        "probabilities": {
+          "contradiction": 0.0023,
+          "entailment": 0.9508,
+          "neutral": 0.0469
+        }
+      },
+      "reason": "Rule-based and NLI checks agree on support."
+    },
+    {
+      "dataset": "adversarial_grounding_cases.json",
+      "test_id": "ADV-006",
+      "claim": "Employees must never use a company VPN for protected remote access.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "needs_review",
+      "nli": {
+        "label": "contradiction",
+        "confidence": 0.9987,
+        "probabilities": {
+          "contradiction": 0.9987,
+          "entailment": 0.0001,
+          "neutral": 0.0012
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "adversarial_grounding_cases.json",
+      "test_id": "ADV-007",
+      "claim": "Employees must use an approved VPN for protected remote access.",
+      "expected": "supported",
+      "predicted": "supported",
+      "exact_match": true,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "supported",
+      "nli": {
+        "label": "entailment",
+        "confidence": 0.9919,
+        "probabilities": {
+          "contradiction": 0.0001,
+          "entailment": 0.9919,
+          "neutral": 0.008
+        }
+      },
+      "reason": "Rule-based and NLI checks agree on support."
+    },
+    {
+      "dataset": "adversarial_grounding_cases.json",
+      "test_id": "ADV-008",
+      "claim": "Employees must use VPN only when working from the office.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "unsupported",
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.9923,
+        "probabilities": {
+          "contradiction": 0.0039,
+          "entailment": 0.0038,
+          "neutral": 0.9923
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "adversarial_grounding_cases.json",
+      "test_id": "ADV-009",
+      "claim": "Passwords must be exactly 30 characters long.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "unsupported",
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.6771,
+        "probabilities": {
+          "contradiction": 0.3215,
+          "entailment": 0.0013,
+          "neutral": 0.6771
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "adversarial_grounding_cases.json",
+      "test_id": "ADV-010",
+      "claim": "Unexpected MFA requests must be reported within exactly 17 minutes.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "unsupported",
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.9996,
+        "probabilities": {
+          "contradiction": 0.0003,
+          "entailment": 0.0001,
+          "neutral": 0.9996
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "unseen_adversarial_cases.json",
+      "test_id": "UNSEEN-001",
+      "claim": "Corporate passwords must contain at least 14 characters.",
+      "expected": "supported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "supported",
+      "nli": {
+        "label": "entailment",
+        "confidence": 0.5939,
+        "probabilities": {
+          "contradiction": 0.002,
+          "entailment": 0.5939,
+          "neutral": 0.4041
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "unseen_adversarial_cases.json",
+      "test_id": "UNSEEN-002",
+      "claim": "Corporate passwords may contain fewer than 14 characters.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "needs_review",
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.7356,
+        "probabilities": {
+          "contradiction": 0.202,
+          "entailment": 0.0624,
+          "neutral": 0.7356
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "unseen_adversarial_cases.json",
+      "test_id": "UNSEEN-003",
+      "claim": "Employees are not required to report unexpected MFA approval requests to the security team.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "needs_review",
+      "nli": {
+        "label": "contradiction",
+        "confidence": 0.9989,
+        "probabilities": {
+          "contradiction": 0.9989,
+          "entailment": 0.0002,
+          "neutral": 0.0009
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "unseen_adversarial_cases.json",
+      "test_id": "UNSEEN-004",
+      "claim": "VPN access is optional when accessing protected internal resources remotely.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "needs_review",
+      "nli": {
+        "label": "contradiction",
+        "confidence": 0.9933,
+        "probabilities": {
+          "contradiction": 0.9933,
+          "entailment": 0.0004,
+          "neutral": 0.0063
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "unseen_adversarial_cases.json",
+      "test_id": "UNSEEN-005",
+      "claim": "Employees must use an approved VPN for protected remote access.",
+      "expected": "supported",
+      "predicted": "supported",
+      "exact_match": true,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "supported",
+      "nli": {
+        "label": "entailment",
+        "confidence": 0.9919,
+        "probabilities": {
+          "contradiction": 0.0001,
+          "entailment": 0.9919,
+          "neutral": 0.008
+        }
+      },
+      "reason": "Rule-based and NLI checks agree on support."
+    },
+    {
+      "dataset": "unseen_adversarial_cases.json",
+      "test_id": "UNSEEN-006",
+      "claim": "Employees should report unexpected MFA requests to the security team.",
+      "expected": "supported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "supported",
+      "nli": {
+        "label": "entailment",
+        "confidence": 0.638,
+        "probabilities": {
+          "contradiction": 0.0148,
+          "entailment": 0.638,
+          "neutral": 0.3472
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "unseen_adversarial_cases.json",
+      "test_id": "UNSEEN-007",
+      "claim": "Corporate passwords must contain at least 14 characters, but MFA is never necessary.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "needs_review",
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.9758,
+        "probabilities": {
+          "contradiction": 0.024,
+          "entailment": 0.0002,
+          "neutral": 0.9758
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "unseen_adversarial_cases.json",
+      "test_id": "UNSEEN-008",
+      "claim": "Security incidents must be reported within 5 minutes.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "needs_review",
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.9995,
+        "probabilities": {
+          "contradiction": 0.0002,
+          "entailment": 0.0003,
+          "neutral": 0.9995
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "unseen_adversarial_cases.json",
+      "test_id": "UNSEEN-009",
+      "claim": "Employees may bypass the VPN when working from home.",
+      "expected": "unsupported",
+      "predicted": "needs_review",
+      "exact_match": false,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "needs_review",
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.9774,
+        "probabilities": {
+          "contradiction": 0.0204,
+          "entailment": 0.0022,
+          "neutral": 0.9774
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "dataset": "unseen_adversarial_cases.json",
+      "test_id": "UNSEEN-010",
+      "claim": "Passwords must have a minimum length of 14 characters.",
+      "expected": "supported",
+      "predicted": "supported",
+      "exact_match": true,
+      "unsafe_approval": false,
+      "false_rejection": false,
+      "rule_status": "supported",
+      "nli": {
+        "label": "entailment",
+        "confidence": 0.9215,
+        "probabilities": {
+          "contradiction": 0.0001,
+          "entailment": 0.9215,
+          "neutral": 0.0784
+        }
+      },
+      "reason": "Rule-based and NLI checks agree on support."
+    }
+  ]
+}
