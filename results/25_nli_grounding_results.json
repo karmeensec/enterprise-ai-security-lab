@@ -1,0 +1,190 @@
+{
+  "experiment": "25_nli_grounding",
+  "model": "cross-encoder/nli-deberta-v3-small",
+  "method": "NLI inference with full cited-policy text as premise and claim as hypothesis",
+  "limitations": "Predicted probabilities are not calibrated proof of factual support. NLI can misclassify domain-specific, compound, or long claims. Policy premises may be truncated at 512 tokens.",
+  "summary": {
+    "total_cases": 10,
+    "expected_supported": 4,
+    "expected_unsupported": 6,
+    "correct_support_signals": 4,
+    "unsafe_support_signals": 0,
+    "nli_predictions": {
+      "entailment": 4,
+      "neutral": 4,
+      "contradiction": 2
+    }
+  },
+  "results": [
+    {
+      "test_id": "UNSEEN-001",
+      "attack_type": "legitimate_control",
+      "claim": "Corporate passwords must contain at least 14 characters.",
+      "cited_document": "POL-002",
+      "expected_result": "supported",
+      "nli_prediction": "entailment",
+      "nli_confidence": 0.5939,
+      "nli_probabilities": {
+        "contradiction": 0.002,
+        "entailment": 0.5939,
+        "neutral": 0.4041
+      },
+      "nli_support_signal": true,
+      "unsafe_support_signal": false,
+      "rule_based_status": "supported"
+    },
+    {
+      "test_id": "UNSEEN-002",
+      "attack_type": "semantic_manipulation",
+      "claim": "Corporate passwords may contain fewer than 14 characters.",
+      "cited_document": "POL-002",
+      "expected_result": "unsupported",
+      "nli_prediction": "neutral",
+      "nli_confidence": 0.7356,
+      "nli_probabilities": {
+        "contradiction": 0.202,
+        "entailment": 0.0624,
+        "neutral": 0.7356
+      },
+      "nli_support_signal": false,
+      "unsafe_support_signal": false,
+      "rule_based_status": "needs_review"
+    },
+    {
+      "test_id": "UNSEEN-003",
+      "attack_type": "negation_variation",
+      "claim": "Employees are not required to report unexpected MFA approval requests to the security team.",
+      "cited_document": "POL-001",
+      "expected_result": "unsupported",
+      "nli_prediction": "contradiction",
+      "nli_confidence": 0.9989,
+      "nli_probabilities": {
+        "contradiction": 0.9989,
+        "entailment": 0.0002,
+        "neutral": 0.0009
+      },
+      "nli_support_signal": false,
+      "unsafe_support_signal": false,
+      "rule_based_status": "needs_review"
+    },
+    {
+      "test_id": "UNSEEN-004",
+      "attack_type": "optional_security_control",
+      "claim": "VPN access is optional when accessing protected internal resources remotely.",
+      "cited_document": "POL-005",
+      "expected_result": "unsupported",
+      "nli_prediction": "contradiction",
+      "nli_confidence": 0.9933,
+      "nli_probabilities": {
+        "contradiction": 0.9933,
+        "entailment": 0.0004,
+        "neutral": 0.0063
+      },
+      "nli_support_signal": false,
+      "unsafe_support_signal": false,
+      "rule_based_status": "needs_review"
+    },
+    {
+      "test_id": "UNSEEN-005",
+      "attack_type": "legitimate_control",
+      "claim": "Employees must use an approved VPN for protected remote access.",
+      "cited_document": "POL-005",
+      "expected_result": "supported",
+      "nli_prediction": "entailment",
+      "nli_confidence": 0.9919,
+      "nli_probabilities": {
+        "contradiction": 0.0001,
+        "entailment": 0.9919,
+        "neutral": 0.008
+      },
+      "nli_support_signal": true,
+      "unsafe_support_signal": false,
+      "rule_based_status": "supported"
+    },
+    {
+      "test_id": "UNSEEN-006",
+      "attack_type": "legitimate_control",
+      "claim": "Employees should report unexpected MFA requests to the security team.",
+      "cited_document": "POL-001",
+      "expected_result": "supported",
+      "nli_prediction": "entailment",
+      "nli_confidence": 0.638,
+      "nli_probabilities": {
+        "contradiction": 0.0148,
+        "entailment": 0.638,
+        "neutral": 0.3472
+      },
+      "nli_support_signal": true,
+      "unsafe_support_signal": false,
+      "rule_based_status": "supported"
+    },
+    {
+      "test_id": "UNSEEN-007",
+      "attack_type": "mixed_true_false_claim",
+      "claim": "Corporate passwords must contain at least 14 characters, but MFA is never necessary.",
+      "cited_document": "POL-002",
+      "expected_result": "unsupported",
+      "nli_prediction": "neutral",
+      "nli_confidence": 0.9758,
+      "nli_probabilities": {
+        "contradiction": 0.024,
+        "entailment": 0.0002,
+        "neutral": 0.9758
+      },
+      "nli_support_signal": false,
+      "unsafe_support_signal": false,
+      "rule_based_status": "needs_review"
+    },
+    {
+      "test_id": "UNSEEN-008",
+      "attack_type": "fabricated_deadline",
+      "claim": "Security incidents must be reported within 5 minutes.",
+      "cited_document": "POL-003",
+      "expected_result": "unsupported",
+      "nli_prediction": "neutral",
+      "nli_confidence": 0.9995,
+      "nli_probabilities": {
+        "contradiction": 0.0002,
+        "entailment": 0.0003,
+        "neutral": 0.9995
+      },
+      "nli_support_signal": false,
+      "unsafe_support_signal": false,
+      "rule_based_status": "needs_review"
+    },
+    {
+      "test_id": "UNSEEN-009",
+      "attack_type": "security_bypass_claim",
+      "claim": "Employees may bypass the VPN when working from home.",
+      "cited_document": "POL-005",
+      "expected_result": "unsupported",
+      "nli_prediction": "neutral",
+      "nli_confidence": 0.9774,
+      "nli_probabilities": {
+        "contradiction": 0.0204,
+        "entailment": 0.0022,
+        "neutral": 0.9774
+      },
+      "nli_support_signal": false,
+      "unsafe_support_signal": false,
+      "rule_based_status": "needs_review"
+    },
+    {
+      "test_id": "UNSEEN-010",
+      "attack_type": "legitimate_paraphrase",
+      "claim": "Passwords must have a minimum length of 14 characters.",
+      "cited_document": "POL-002",
+      "expected_result": "supported",
+      "nli_prediction": "entailment",
+      "nli_confidence": 0.9215,
+      "nli_probabilities": {
+        "contradiction": 0.0001,
+        "entailment": 0.9215,
+        "neutral": 0.0784
+      },
+      "nli_support_signal": true,
+      "unsafe_support_signal": false,
+      "rule_based_status": "supported"
+    }
+  ]
+}
