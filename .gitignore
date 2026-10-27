@@ -6,3 +6,6 @@ __pycache__/
 !.env.example
 .ipynb_checkpoints/
 .pytest_cache/
+
+# Local security audit logs
+logs/

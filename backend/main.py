@@ -19,6 +19,8 @@ from backend.citation_validator import validate_citations
 from backend.security_service import AISecurityService
 from backend.grounding_validator import load_policies
 
+from backend.audit_logger import record_security_evaluation
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("enterprise_ai_security_lab")
@@ -267,6 +269,7 @@ def rag_chat(
 
 
 
+
 @app.post(
     "/security/evaluate",
     response_model=SecurityEvaluationResponse,
@@ -277,6 +280,10 @@ def evaluate_security(
     service: AISecurityService = Depends(get_security_service),
 ):
     request_id = http_request.state.request_id
+    start_time = time.perf_counter()
+
+    decision = "evaluation_error"
+    review_required = True
 
     try:
         policies = load_policies()
@@ -288,10 +295,15 @@ def evaluate_security(
             known_document_ids=list(policies.keys()),
         )
 
-        return SecurityEvaluationResponse(
+        response = SecurityEvaluationResponse(
             request_id=request_id,
             **assessment.to_dict(),
         )
+
+        decision = response.decision
+        review_required = response.review_required
+
+        return response
 
     except Exception:
         logger.exception(
@@ -303,3 +315,26 @@ def evaluate_security(
             status_code=503,
             detail="Security evaluation temporarily unavailable",
         )
+
+    finally:
+        duration_ms = (
+            time.perf_counter() - start_time
+        ) * 1000
+
+        try:
+            record_security_evaluation(
+                request_id=request_id,
+                cited_document=request.cited_document,
+                decision=decision,
+                review_required=review_required,
+                duration_ms=duration_ms,
+            )
+
+        except Exception:
+            # Audit failures are reported, not silently ignored.
+            # For now, logging is best-effort and does not
+            # change the API's evaluation response.
+            logger.exception(
+                "Security audit write failed request_id=%s",
+                request_id,
+            )
