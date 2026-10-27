@@ -8,13 +8,22 @@ from backend.retrieval_service import get_retrieval_service
 
 
 class FakeRetriever:
+    # Simulates the knowledge base used for citation validation
+    documents = [
+        {"id": "POL-001"},
+        {"id": "POL-002"},
+        {"id": "POL-003"},
+        {"id": "POL-004"},
+        {"id": "POL-005"},
+    ]
+
     def search(self, question, top_k=3):
         return [
             {
                 "document_id": "POL-001",
                 "title": "MFA Policy",
                 "content": "Report unexpected MFA requests.",
-                "similarity_score": 0.85
+                "similarity_score": 0.85,
             }
         ]
 
@@ -34,7 +43,7 @@ class FakeLLM:
             "generation_time_seconds": 0.001,
             "input_tokens": 50,
             "generated_tokens": 20,
-            "truncated": False
+            "truncated": False,
         }
 
 
@@ -58,7 +67,7 @@ def client():
 def test_rag_response(client):
     response = client.post(
         "/chat/rag",
-        json={"message": "What is our MFA policy?"}
+        json={"message": "What is our MFA policy?"},
     )
 
     assert response.status_code == 200
@@ -70,11 +79,20 @@ def test_rag_response(client):
     assert data["sources"][0]["document_id"] == "POL-001"
     assert "[POL-001]" in data["response"]
 
+    # Experiment 17: Verify citation validation metadata
+    validation = data["citation_validation"]
+
+    assert validation["status"] == "references_verified"
+    assert validation["citations"] == ["POL-001"]
+    assert validation["valid_citations"] == ["POL-001"]
+    assert validation["all_references_verified"] is True
+    assert validation["claim_support_verified"] is False
+
 
 def test_rag_request_id(client):
     response = client.post(
         "/chat/rag",
-        json={"message": "What is MFA?"}
+        json={"message": "What is MFA?"},
     )
 
     assert response.status_code == 200
@@ -87,7 +105,7 @@ def test_rag_request_id(client):
 def test_rag_empty_message(client):
     response = client.post(
         "/chat/rag",
-        json={"message": ""}
+        json={"message": ""},
     )
 
     assert response.status_code == 422
@@ -96,7 +114,7 @@ def test_rag_empty_message(client):
 def test_rag_oversized_message(client):
     response = client.post(
         "/chat/rag",
-        json={"message": "A" * 2001}
+        json={"message": "A" * 2001},
     )
 
     assert response.status_code == 422

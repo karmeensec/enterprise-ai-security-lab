@@ -14,6 +14,7 @@ from backend.llm_service import (
 )
 
 from backend.retrieval_service import get_retrieval_service
+from backend.citation_validator import validate_citations
 
 
 logging.basicConfig(level=logging.INFO)
@@ -50,9 +51,22 @@ class SourceDocument(BaseModel):
     similarity_score: float
 
 
+class CitationValidation(BaseModel):
+    status: str
+    citations: list[str]
+    valid_citations: list[str]
+    unknown_citations: list[str]
+    not_retrieved: list[str]
+    citation_count: int
+    all_references_verified: bool
+    claim_support_verified: bool
+
+
+
 class RAGChatResponse(ChatResponse):
     sources: list[SourceDocument]
     retrieval_count: int
+    citation_validation: CitationValidation
 
 
 
@@ -201,9 +215,28 @@ def rag_chat(
         for doc in documents
     ]
 
+    
+    retrieved_ids = [
+        doc["document_id"]
+        for doc in documents
+    ]
+
+    known_ids = [
+        doc["id"]
+        for doc in retriever.documents
+    ]
+
+    citation_result = validate_citations(
+        answer=result["response"],
+        retrieved_document_ids=retrieved_ids,
+        known_document_ids=known_ids,
+    )
+
+
     return RAGChatResponse(
         **result,
         request_id=request_id,
         sources=sources,
-        retrieval_count=len(sources)
+        retrieval_count=len(sources),
+        citation_validation=CitationValidation(**citation_result),
     )
