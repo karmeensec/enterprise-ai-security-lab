@@ -1,0 +1,61 @@
+{
+  "experiment": "30_security_monitoring",
+  "scenario": "Synthetic enterprise AI audit events",
+  "event_count": 12,
+  "monitoring_result": {
+    "reference_time": "2026-10-27T18:07:44.047682+00:00",
+    "window_start": "2026-10-27T18:02:44.047682+00:00",
+    "window_minutes": 5,
+    "events_in_window": 12,
+    "alert_count": 3,
+    "alerts": [
+      {
+        "rule_id": "AI-MON-001",
+        "rule_name": "Repeated AI evaluation failures",
+        "severity": "high",
+        "status": "triggered",
+        "event_count": 3,
+        "threshold": 3,
+        "window_minutes": 5,
+        "request_ids": [
+          "error-0",
+          "error-1",
+          "error-2"
+        ],
+        "detected_at": "2026-10-27T18:07:44.047682+00:00"
+      },
+      {
+        "rule_id": "AI-MON-002",
+        "rule_name": "High manual review volume",
+        "severity": "medium",
+        "status": "triggered",
+        "event_count": 6,
+        "threshold": 4,
+        "window_minutes": 5,
+        "request_ids": [
+          "review-0",
+          "review-1",
+          "review-2",
+          "review-3",
+          "unknown-0",
+          "unknown-1"
+        ],
+        "detected_at": "2026-10-27T18:07:44.047682+00:00"
+      },
+      {
+        "rule_id": "AI-MON-003",
+        "rule_name": "Repeated unrecognized document references",
+        "severity": "medium",
+        "status": "triggered",
+        "event_count": 2,
+        "threshold": 2,
+        "window_minutes": 5,
+        "request_ids": [
+          "unknown-0",
+          "unknown-1"
+        ],
+        "detected_at": "2026-10-27T18:07:44.047682+00:00"
+      }
+    ]
+  }
+}
