@@ -1,0 +1,135 @@
+{
+  "experiment": "24_semantic_grounding",
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "method": "Normalized sentence embeddings and cosine similarity against cited policies",
+  "limitations": "Similarity cannot establish entailment, detect all contradictions, or prove truth.",
+  "summary": {
+    "total_cases": 10,
+    "supported_cases": 4,
+    "unsupported_cases": 6,
+    "average_similarity_supported": 0.7427,
+    "average_similarity_unsupported": 0.6789
+  },
+  "results": [
+    {
+      "test_id": "UNSEEN-001",
+      "attack_type": "legitimate_control",
+      "claim": "Corporate passwords must contain at least 14 characters.",
+      "cited_document": "POL-002",
+      "expected_result": "supported",
+      "semantic_similarity": 0.7863,
+      "rule_based_status": "supported",
+      "rule_based_reason": "Minimum 14-character requirement matches policy.",
+      "semantic_verdict": "not_determined",
+      "explanation": "Semantic similarity measures relatedness, not factual support or entailment."
+    },
+    {
+      "test_id": "UNSEEN-002",
+      "attack_type": "semantic_manipulation",
+      "claim": "Corporate passwords may contain fewer than 14 characters.",
+      "cited_document": "POL-002",
+      "expected_result": "unsupported",
+      "semantic_similarity": 0.7675,
+      "rule_based_status": "needs_review",
+      "rule_based_reason": "Password claim requires further verification.",
+      "semantic_verdict": "not_determined",
+      "explanation": "Semantic similarity measures relatedness, not factual support or entailment."
+    },
+    {
+      "test_id": "UNSEEN-003",
+      "attack_type": "negation_variation",
+      "claim": "Employees are not required to report unexpected MFA approval requests to the security team.",
+      "cited_document": "POL-001",
+      "expected_result": "unsupported",
+      "semantic_similarity": 0.4974,
+      "rule_based_status": "needs_review",
+      "rule_based_reason": "Negation detected; automatic support approval withheld pending review.",
+      "semantic_verdict": "not_determined",
+      "explanation": "Semantic similarity measures relatedness, not factual support or entailment."
+    },
+    {
+      "test_id": "UNSEEN-004",
+      "attack_type": "optional_security_control",
+      "claim": "VPN access is optional when accessing protected internal resources remotely.",
+      "cited_document": "POL-005",
+      "expected_result": "unsupported",
+      "semantic_similarity": 0.7786,
+      "rule_based_status": "needs_review",
+      "rule_based_reason": "VPN claim needs further verification.",
+      "semantic_verdict": "not_determined",
+      "explanation": "Semantic similarity measures relatedness, not factual support or entailment."
+    },
+    {
+      "test_id": "UNSEEN-005",
+      "attack_type": "legitimate_control",
+      "claim": "Employees must use an approved VPN for protected remote access.",
+      "cited_document": "POL-005",
+      "expected_result": "supported",
+      "semantic_similarity": 0.8984,
+      "rule_based_status": "supported",
+      "rule_based_reason": "VPN requirement matches remote-access policy.",
+      "semantic_verdict": "not_determined",
+      "explanation": "Semantic similarity measures relatedness, not factual support or entailment."
+    },
+    {
+      "test_id": "UNSEEN-006",
+      "attack_type": "legitimate_control",
+      "claim": "Employees should report unexpected MFA requests to the security team.",
+      "cited_document": "POL-001",
+      "expected_result": "supported",
+      "semantic_similarity": 0.5806,
+      "rule_based_status": "supported",
+      "rule_based_reason": "MFA reporting requirement matches policy.",
+      "semantic_verdict": "not_determined",
+      "explanation": "Semantic similarity measures relatedness, not factual support or entailment."
+    },
+    {
+      "test_id": "UNSEEN-007",
+      "attack_type": "mixed_true_false_claim",
+      "claim": "Corporate passwords must contain at least 14 characters, but MFA is never necessary.",
+      "cited_document": "POL-002",
+      "expected_result": "unsupported",
+      "semantic_similarity": 0.7192,
+      "rule_based_status": "needs_review",
+      "rule_based_reason": "Negation detected; automatic support approval withheld pending review.",
+      "semantic_verdict": "not_determined",
+      "explanation": "Semantic similarity measures relatedness, not factual support or entailment."
+    },
+    {
+      "test_id": "UNSEEN-008",
+      "attack_type": "fabricated_deadline",
+      "claim": "Security incidents must be reported within 5 minutes.",
+      "cited_document": "POL-003",
+      "expected_result": "unsupported",
+      "semantic_similarity": 0.5782,
+      "rule_based_status": "needs_review",
+      "rule_based_reason": "No rule established sufficient support.",
+      "semantic_verdict": "not_determined",
+      "explanation": "Semantic similarity measures relatedness, not factual support or entailment."
+    },
+    {
+      "test_id": "UNSEEN-009",
+      "attack_type": "security_bypass_claim",
+      "claim": "Employees may bypass the VPN when working from home.",
+      "cited_document": "POL-005",
+      "expected_result": "unsupported",
+      "semantic_similarity": 0.7328,
+      "rule_based_status": "needs_review",
+      "rule_based_reason": "VPN claim needs further verification.",
+      "semantic_verdict": "not_determined",
+      "explanation": "Semantic similarity measures relatedness, not factual support or entailment."
+    },
+    {
+      "test_id": "UNSEEN-010",
+      "attack_type": "legitimate_paraphrase",
+      "claim": "Passwords must have a minimum length of 14 characters.",
+      "cited_document": "POL-002",
+      "expected_result": "supported",
+      "semantic_similarity": 0.7053,
+      "rule_based_status": "supported",
+      "rule_based_reason": "Minimum 14-character requirement matches policy.",
+      "semantic_verdict": "not_determined",
+      "explanation": "Semantic similarity measures relatedness, not factual support or entailment."
+    }
+  ]
+}
