@@ -21,6 +21,12 @@ from backend.grounding_validator import load_policies
 
 from backend.audit_logger import record_security_evaluation
 
+import os
+import secrets
+
+from fastapi import Header
+from backend.log_monitor_service import run_live_monitor
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("enterprise_ai_security_lab")
@@ -93,6 +99,30 @@ class SecurityEvaluationResponse(BaseModel):
 
 def get_security_service():
     return AISecurityService()
+
+
+def require_monitor_api_key(
+    x_monitor_api_key: str | None = Header(default=None),
+):
+    expected_key = os.environ.get("MONITOR_API_KEY")
+
+    if not expected_key:
+        raise HTTPException(
+            status_code=503,
+            detail="Monitoring authentication is not configured",
+        )
+
+    if (
+        x_monitor_api_key is None
+        or not secrets.compare_digest(
+            x_monitor_api_key,
+            expected_key,
+        )
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid monitoring credentials",
+        )
 
 
 
@@ -338,3 +368,31 @@ def evaluate_security(
                 "Security audit write failed request_id=%s",
                 request_id,
             )
+
+
+
+@app.get("/security/monitor")
+def get_security_monitoring(
+    window_minutes: int = 5,
+    _: None = Depends(require_monitor_api_key),
+):
+    if not 1 <= window_minutes <= 60:
+        raise HTTPException(
+            status_code=422,
+            detail="window_minutes must be between 1 and 60",
+        )
+
+    try:
+        return run_live_monitor(
+            window_minutes=window_minutes,
+        )
+
+    except Exception:
+        logger.exception(
+            "Security monitoring request failed"
+        )
+
+        raise HTTPException(
+            status_code=503,
+            detail="Security monitoring temporarily unavailable",
+        )
