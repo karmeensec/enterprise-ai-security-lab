@@ -26,6 +26,7 @@ import secrets
 
 from fastapi import Header
 from backend.log_monitor_service import run_live_monitor
+from dashboard.router import router as dashboard_router
 
 
 logging.basicConfig(level=logging.INFO)
@@ -37,6 +38,7 @@ app = FastAPI(
     version="0.3.0",
 )
 
+app.include_router(dashboard_router)
 
 class ChatRequest(BaseModel):
     message: str = Field(
