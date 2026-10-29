@@ -16,6 +16,9 @@ from fastapi.templating import Jinja2Templates
 
 from backend.log_monitor_service import run_live_monitor
 
+from backend.security_monitor import DETECTION_RULES
+from backend.log_monitor_service import load_audit_events
+
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -92,5 +95,94 @@ def dashboard_home(
             "invalid_lines": report["invalid_lines"],
             "events_in_window": monitoring["events_in_window"],
             "alerts": alerts,
+        },
+    )
+
+
+
+@router.get("/monitoring", response_class=HTMLResponse)
+def dashboard_monitoring(
+    request: Request,
+    _: None = Depends(require_dashboard_login),
+):
+    try:
+        report = run_live_monitor(window_minutes=5)
+    except Exception:
+        raise HTTPException(
+            status_code=503,
+            detail="Dashboard monitoring unavailable",
+        )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "page_title": "Security Monitoring",
+            "dashboard_status": "Development",
+            "active_page": "monitoring",
+            "total_events": report["valid_events_loaded"],
+            "alert_count": report["monitoring"]["alert_count"],
+            "high_severity": sum(
+                1 for alert in report["monitoring"]["alerts"]
+                if alert["severity"] == "high"
+            ),
+            "invalid_lines": report["invalid_lines"],
+            "events_in_window": report["monitoring"]["events_in_window"],
+            "alerts": report["monitoring"]["alerts"],
+            "window_minutes": 5,
+        },
+    )
+
+
+@router.get("/rules", response_class=HTMLResponse)
+def dashboard_rules(
+    request: Request,
+    _: None = Depends(require_dashboard_login),
+):
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "page_title": "Detection Rules",
+            "dashboard_status": "Development",
+            "active_page": "rules",
+            "detection_rules": [
+                {"rule_id": rule_id, **rule}
+                for rule_id, rule in DETECTION_RULES.items()
+            ],
+        },
+    )
+
+
+@router.get("/events", response_class=HTMLResponse)
+def dashboard_events(
+    request: Request,
+    _: None = Depends(require_dashboard_login),
+):
+    try:
+        audit_data = load_audit_events()
+    except Exception:
+        raise HTTPException(
+            status_code=503,
+            detail="Audit history temporarily unavailable",
+        )
+
+    # Limit event history shown in the browser.
+    recent_events = sorted(
+        audit_data["events"],
+        key=lambda event: event["timestamp"],
+        reverse=True,
+    )[:50]
+
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "page_title": "Audit Events",
+            "dashboard_status": "Development",
+            "active_page": "events",
+            "audit_events": recent_events,
+            "total_events": audit_data["valid_events"],
+            "invalid_lines": audit_data["invalid_lines"],
         },
     )
