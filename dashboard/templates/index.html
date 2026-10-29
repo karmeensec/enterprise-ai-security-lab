@@ -3,10 +3,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>{{ page_title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title | default('AI Security Console') }}</title>
 
     <style>
         :root {
@@ -29,16 +27,13 @@
             margin: 0;
             background: var(--background);
             color: var(--text);
-            font-family: Inter, "Segoe UI",
-                         Arial, sans-serif;
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
         }
 
         .layout {
             display: flex;
             min-height: 100vh;
         }
-
-        /* Sidebar */
 
         .sidebar {
             width: 245px;
@@ -56,7 +51,6 @@
             font-size: 20px;
             font-weight: 800;
             letter-spacing: -0.5px;
-            color: var(--text);
             line-height: 1.3;
         }
 
@@ -95,8 +89,6 @@
             color: #3e67ba;
             font-weight: 700;
         }
-
-        /* Main Layout */
 
         .main {
             flex: 1;
@@ -143,22 +135,19 @@
             white-space: nowrap;
         }
 
-        /* Metric Cards */
-
         .cards {
             display: grid;
-            grid-template-columns:
-                repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 18px;
         }
 
-        .card {
+        .card,
+        .panel {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 24px;
-            box-shadow: 0 5px 22px
-                        rgba(25, 42, 64, 0.025);
+            box-shadow: 0 5px 22px rgba(25, 42, 64, 0.025);
         }
 
         .card-heading {
@@ -214,8 +203,6 @@
             margin-top: 12px;
         }
 
-        /* Dashboard Panels */
-
         .section-grid {
             display: grid;
             grid-template-columns: 1.5fr 1fr;
@@ -224,11 +211,8 @@
         }
 
         .panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 26px;
             min-height: 270px;
+            padding: 26px;
         }
 
         .panel h2 {
@@ -255,8 +239,6 @@
             font-weight: 700;
             margin-bottom: 7px;
         }
-
-        /* Detection Alerts */
 
         .alert-item {
             padding: 16px;
@@ -287,7 +269,7 @@
         }
 
         .severity.high {
-            background: #f9e7e5;
+            background: var(--rose);
             color: #b44848;
         }
 
@@ -306,8 +288,6 @@
             color: var(--muted);
             margin: 10px 0 0;
         }
-
-        /* Health Panel */
 
         .health-row {
             display: flex;
@@ -344,12 +324,75 @@
             color: var(--muted);
         }
 
-        /* Responsive Layout */
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 22px 0;
+            align-items: end;
+        }
+
+        .form-field label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 7px;
+            font-weight: 600;
+        }
+
+        .form-field input,
+        .form-field select {
+            padding: 11px;
+            border: 1px solid #d9dfe6;
+            border-radius: 8px;
+            font: inherit;
+            background: white;
+            color: var(--text);
+            max-width: 100%;
+        }
+
+        .btn {
+            background: var(--blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 18px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .clear-link {
+            padding: 12px;
+            color: var(--blue);
+            text-decoration: none;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        tbody tr {
+            border-top: 1px solid var(--border);
+        }
+
+        td.request-id {
+            overflow-wrap: anywhere;
+        }
 
         @media (max-width: 1100px) {
             .cards {
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
             .section-grid {
@@ -395,9 +438,10 @@
 
 <body>
 
-<div class="layout">
+{% set page = active_page | default('overview') %}
+{% set current_window = window_minutes | default(5) %}
 
-    <!-- SIDEBAR -->
+<div class="layout">
 
     <aside class="sidebar">
 
@@ -411,67 +455,52 @@
             </div>
         </div>
 
-        
-    <div class="nav-label">WORKSPACE</div>
+        <div class="nav-label">WORKSPACE</div>
 
         <a href="/dashboard/"
-        class="nav-item {% if active_page | default('overview') == 'overview' %}active{% endif %}">
+           class="nav-item {% if page == 'overview' %}active{% endif %}"
+           {% if page == 'overview' %}aria-current="page"{% endif %}>
             ◈ &nbsp; Overview
         </a>
 
         <a href="/dashboard/monitoring"
-        class="nav-item {% if active_page | default('overview') == 'monitoring' %}active{% endif %}">
+           class="nav-item {% if page == 'monitoring' %}active{% endif %}"
+           {% if page == 'monitoring' %}aria-current="page"{% endif %}>
             ◉ &nbsp; Security Monitoring
         </a>
 
         <a href="/dashboard/rules"
-        class="nav-item {% if active_page | default('overview') == 'rules' %}active{% endif %}">
+           class="nav-item {% if page == 'rules' %}active{% endif %}"
+           {% if page == 'rules' %}aria-current="page"{% endif %}>
             ◇ &nbsp; Detection Rules
         </a>
 
         <a href="/dashboard/events"
-        class="nav-item {% if active_page | default('overview') == 'events' %}active{% endif %}">
+           class="nav-item {% if page == 'events' %}active{% endif %}"
+           {% if page == 'events' %}aria-current="page"{% endif %}>
             ▤ &nbsp; Audit Events
         </a>
 
-
-        <div class="nav-item active">
-            ◈ &nbsp; Overview
-        </div>
-
-        <div class="nav-item">
-            ◉ &nbsp; Security Monitoring
-        </div>
-
-        <div class="nav-item">
-            ◇ &nbsp; Detection Rules
-        </div>
-
-        <div class="nav-item">
-            ▤ &nbsp; Audit Events
-        </div>
-
-        <div class="nav-item">
-            ⚙ &nbsp; Settings
-        </div>
-
     </aside>
-
-    <!-- MAIN CONTENT -->
 
     <main class="main">
 
-        <!-- HEADER -->
-
         <header class="topbar">
-
             <div>
                 <div class="eyebrow">
                     Security Intelligence
                 </div>
 
                 <h1>
-                    Security Overview
+                    {% if page == 'monitoring' %}
+                        Security Monitoring
+                    {% elif page == 'rules' %}
+                        Detection Rules
+                    {% elif page == 'events' %}
+                        Audit Events
+                    {% else %}
+                        Security Overview
+                    {% endif %}
                 </h1>
 
                 <p class="subtitle">
@@ -481,433 +510,404 @@
             </div>
 
             <div class="status">
-                ● {{ dashboard_status }}
+                ● {{ dashboard_status | default('Development') }}
             </div>
-
         </header>
 
-        <!-- METRIC CARDS -->
+        {% if page in ['overview', 'monitoring'] %}
 
-        {% if active_page | default('overview') in ['overview', 'monitoring'] %}
-        <section class="cards">
+            {% if page == 'monitoring' %}
 
-            <!-- Total Events -->
+                <form class="filter-form"
+                      method="get"
+                      action="/dashboard/monitoring">
 
-            <div class="card">
-                <div class="card-heading">
-                    <h3>Total Audit Events</h3>
-                    <div class="card-icon">▤</div>
-                </div>
+                    <div class="form-field">
+                        <label for="window_minutes">
+                            Monitoring Window
+                        </label>
 
-                <div class="number">
-                    {{ total_events }}
-                </div>
+                        <select id="window_minutes"
+                                name="window_minutes">
 
-                <div class="metric-note">
-                    Events recorded in the audit log
-                </div>
-            </div>
+                            {% for minutes in [5, 15, 30, 60] %}
 
-            <!-- Alerts -->
+                                <option value="{{ minutes }}"
+                                    {% if current_window == minutes %}
+                                        selected
+                                    {% endif %}>
+                                    Last {{ minutes }} minutes
+                                </option>
 
-            <div class="card">
-                <div class="card-heading">
-                    <h3>Security Alerts</h3>
-                    <div class="card-icon warning">⚑</div>
-                </div>
+                            {% endfor %}
 
-                <div class="number">
-                    {{ alert_count }}
-                </div>
-
-                <div class="metric-note">
-                    Alerts in the last five minutes
-                </div>
-            </div>
-
-            <!-- High Severity -->
-
-            <div class="card">
-                <div class="card-heading">
-                    <h3>High Severity</h3>
-                    <div class="card-icon danger">!</div>
-                </div>
-
-                <div class="number">
-                    {{ high_severity }}
-                </div>
-
-                <div class="metric-note">
-                    High-severity detection findings
-                </div>
-            </div>
-
-            <!-- Invalid Lines -->
-
-            <div class="card">
-                <div class="card-heading">
-                    <h3>Invalid Log Lines</h3>
-                    <div class="card-icon success">✓</div>
-                </div>
-
-                <div class="number">
-                    {{ invalid_lines }}
-                </div>
-
-                <div class="metric-note">
-                    Malformed or invalid audit records
-                </div>
-            </div>
-
-        </section>
-
-        <!-- MONITORING PANELS -->
-
-        <section class="section-grid">
-
-            <!-- DETECTION FINDINGS -->
-
-            <div class="panel">
-
-                <h2>
-                    Security Detection Findings
-                </h2>
-
-                <p class="subtitle">
-                    Automated detection results
-                    from the last five minutes.
-                </p>
-
-                {% if alerts %}
-
-                    {% for alert in alerts %}
-
-                        <div class="alert-item">
-
-                            <div class="alert-header">
-
-                                <span class="alert-title">
-                                    {{ alert.rule_name }}
-                                </span>
-
-                                <span class="severity {{ alert.severity }}">
-                                    {{ alert.severity | upper }}
-                                </span>
-
-                            </div>
-
-                            <p class="alert-details">
-                                Rule: {{ alert.rule_id }}
-                                · {{ alert.event_count }} matching events
-                                · Threshold: {{ alert.threshold }}
-                            </p>
-
-                        </div>
-
-                    {% endfor %}
-
-                {% else %}
-
-                    <div class="empty-state">
-
-                        <div class="empty-icon">
-                            ◎
-                        </div>
-
-                        <div class="empty-title">
-                            No alerts in the current window
-                        </div>
-
-                        <div class="subtitle">
-                            {{ events_in_window }}
-                            audit events analyzed
-                            in the last five minutes.
-                        </div>
-
+                        </select>
                     </div>
 
-                {% endif %}
+                    <button class="btn" type="submit">
+                        Apply
+                    </button>
 
-            </div>
+                </form>
 
-            <!-- AI SECURITY HEALTH -->
+            {% endif %}
 
-            <div class="panel">
+            <section class="cards">
 
-                <h2>
-                    AI Security Health
-                </h2>
+                <div class="card">
+                    <div class="card-heading">
+                        <h3>Total Audit Events</h3>
+                        <div class="card-icon">▤</div>
+                    </div>
+
+                    <div class="number">
+                        {{ total_events }}
+                    </div>
+
+                    <div class="metric-note">
+                        Events recorded in the audit log (all time)
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-heading">
+                        <h3>Security Alerts</h3>
+                        <div class="card-icon warning">⚑</div>
+                    </div>
+
+                    <div class="number">
+                        {{ alert_count }}
+                    </div>
+
+                    <div class="metric-note">
+                        Alerts in the last {{ current_window }} minutes
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-heading">
+                        <h3>High Severity</h3>
+                        <div class="card-icon danger">!</div>
+                    </div>
+
+                    <div class="number">
+                        {{ high_severity }}
+                    </div>
+
+                    <div class="metric-note">
+                        High-severity findings in the selected window
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-heading">
+                        <h3>Invalid Log Lines</h3>
+                        <div class="card-icon success">✓</div>
+                    </div>
+
+                    <div class="number">
+                        {{ invalid_lines }}
+                    </div>
+
+                    <div class="metric-note">
+                        Malformed or invalid audit records
+                    </div>
+                </div>
+
+            </section>
+
+            <section class="section-grid">
+
+                <div class="panel">
+                    <h2>Security Detection Findings</h2>
+
+                    <p class="subtitle">
+                        Automated detection results from the
+                        last {{ current_window }} minutes.
+                    </p>
+
+                    {% if alerts %}
+
+                        {% for alert in alerts %}
+
+                            <div class="alert-item">
+                                <div class="alert-header">
+                                    <span class="alert-title">
+                                        {{ alert.rule_name }}
+                                    </span>
+
+                                    <span class="severity {{ alert.severity }}">
+                                        {{ alert.severity | upper }}
+                                    </span>
+                                </div>
+
+                                <p class="alert-details">
+                                    Rule: {{ alert.rule_id }}
+                                    · {{ alert.event_count }} matching events
+                                    · Threshold: {{ alert.threshold }}
+                                </p>
+                            </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="empty-state">
+                            <div class="empty-icon">◎</div>
+
+                            <div class="empty-title">
+                                No alerts in the current window
+                            </div>
+
+                            <div class="subtitle">
+                                {{ events_in_window }} audit events analyzed
+                                in the last {{ current_window }} minutes.
+                            </div>
+                        </div>
+
+                    {% endif %}
+                </div>
+
+                <div class="panel">
+                    <h2>AI Security Health</h2>
+
+                    <p class="subtitle">
+                        Application monitoring and audit status.
+                    </p>
+
+                    <div class="health-row">
+                        <span class="health-label">
+                            Audit Events Loaded
+                        </span>
+                        <span class="health-value">
+                            {{ total_events }}
+                        </span>
+                    </div>
+
+                    <div class="health-row">
+                        <span class="health-label">
+                            Events in Current Window
+                        </span>
+                        <span class="health-value">
+                            {{ events_in_window }}
+                        </span>
+                    </div>
+
+                    <div class="health-row">
+                        <span class="health-label">
+                            Triggered Detection Rules
+                        </span>
+                        <span class="health-value">
+                            {{ alert_count }}
+                        </span>
+                    </div>
+
+                    <div class="health-row">
+                        <span class="health-label">
+                            Invalid Audit Records
+                        </span>
+                        <span class="health-value">
+                            {{ invalid_lines }}
+                        </span>
+                    </div>
+
+                    <div class="health-row">
+                        <span class="health-label">
+                            Monitoring Window
+                        </span>
+                        <span class="health-value">
+                            {{ current_window }} minutes
+                        </span>
+                    </div>
+
+                    <div class="health-row">
+                        <span class="health-label">
+                            Monitoring Mode
+                        </span>
+                        <span class="health-value">
+                            On-demand
+                        </span>
+                    </div>
+
+                    <p class="health-note">
+                        Statistics are calculated from the local
+                        audit file when this page is opened or refreshed.
+                        This is not continuous real-time monitoring.
+                        A detection alert is not proof of an incident.
+                    </p>
+                </div>
+
+            </section>
+
+        {% elif page == 'rules' %}
+
+            <section class="panel">
+                <h2>Detection Rules</h2>
 
                 <p class="subtitle">
-                    Application monitoring
-                    and audit status.
+                    Currently configured security monitoring rules.
+                    Thresholds are evaluated over the selected analysis
+                    window, which defaults to five minutes.
                 </p>
 
-                <div class="health-row">
-                    <span class="health-label">
-                        Audit Events Loaded
-                    </span>
+                {% for rule in detection_rules %}
 
-                    <span class="health-value">
-                        {{ total_events }}
-                    </span>
-                </div>
+                    <div class="alert-item">
+                        <div class="alert-header">
+                            <strong>
+                                {{ rule.rule_id }} — {{ rule.name }}
+                            </strong>
 
-                <div class="health-row">
-                    <span class="health-label">
-                        Events in Current Window
-                    </span>
+                            <span class="severity {{ rule.severity }}">
+                                {{ rule.severity | upper }}
+                            </span>
+                        </div>
 
-                    <span class="health-value">
-                        {{ events_in_window }}
-                    </span>
-                </div>
+                        <p class="alert-details">
+                            Threshold: {{ rule.threshold }}
+                            matching events per analysis window.
+                        </p>
+                    </div>
 
-                <div class="health-row">
-                    <span class="health-label">
-                        Triggered Detection Rules
-                    </span>
-
-                    <span class="health-value">
-                        {{ alert_count }}
-                    </span>
-                </div>
-
-                <div class="health-row">
-                    <span class="health-label">
-                        Invalid Audit Records
-                    </span>
-
-                    <span class="health-value">
-                        {{ invalid_lines }}
-                    </span>
-                </div>
-
-                <div class="health-row">
-                    <span class="health-label">
-                        Monitoring Window
-                    </span>
-
-                    <span class="health-value">
-                        5 minutes
-                    </span>
-                </div>
-
-                <div class="health-row">
-                    <span class="health-label">
-                        Monitoring Mode
-                    </span>
-
-                    <span class="health-value">
-                        On-demand
-                    </span>
-                </div>
-
-                <p class="health-note">
-                    Statistics are calculated from the
-                    local security audit file when the
-                    dashboard is opened or refreshed.
-                    This page does not yet provide
-                    continuous real-time monitoring.
-                </p>
-
-            </div>
-
-        </section>
-
-        
-{% elif active_page == 'rules' %}
-
-<section class="panel">
-    <h2>Detection Rules</h2>
-    <p class="subtitle">
-        Currently configured security monitoring rules.
-    </p>
-
-    {% for rule in detection_rules %}
-    <div class="alert-item">
-        <div class="alert-header">
-            <strong>{{ rule.rule_id }} — {{ rule.name }}</strong>
-            <span class="severity {{ rule.severity }}">
-                {{ rule.severity | upper }}
-            </span>
-        </div>
-
-        <p class="alert-details">
-            Threshold: {{ rule.threshold }} matching events
-            within the five-minute monitoring window
-        </p>
-    </div>
-    {% endfor %}
-</section>
-
-{% elif active_page == 'events' %}
-
-
-<form method="get"
-      action="/dashboard/events"
-      style="
-          display: flex;
-          flex-wrap: wrap;
-          gap: 12px;
-          margin: 22px 0;
-          align-items: end;
-      ">
-
-    <div>
-        <label for="request_id"
-               style="display:block; font-size:12px; margin-bottom:7px;">
-            Request ID
-        </label>
-        <input
-            id="request_id"
-            name="request_id"
-            value="{{ search_request_id }}"
-            placeholder="Search request ID"
-            maxlength="128"
-            style="
-                padding: 11px;
-                border: 1px solid #d9dfe6;
-                border-radius: 8px;
-                font: inherit;
-                background: white;
-            ">
-    </div>
-
-    <div>
-        <label for="decision"
-               style="display:block; font-size:12px; margin-bottom:7px;">
-            Security Decision
-        </label>
-
-        <select id="decision"
-                name="decision"
-                style="
-                    padding: 11px;
-                    border: 1px solid #d9dfe6;
-                    border-radius: 8px;
-                    background: white;
-                    font: inherit;
-                ">
-
-            {% for value, label in [
-                ('all', 'All decisions'),
-                ('supported_by_checks', 'Supported'),
-                ('unsupported_by_checks', 'Unsupported'),
-                ('review_required', 'Review required'),
-                ('evaluation_error', 'Evaluation error')
-            ] %}
-                <option value="{{ value }}"
-                    {% if selected_decision == value %}
-                        selected
-                    {% endif %}>
-                    {{ label }}
-                </option>
-            {% endfor %}
-
-        </select>
-    </div>
-
-    <div>
-        <label for="limit"
-               style="display:block; font-size:12px; margin-bottom:7px;">
-            Results
-        </label>
-
-        <select id="limit"
-                name="limit"
-                style="
-                    padding: 11px;
-                    border: 1px solid #d9dfe6;
-                    border-radius: 8px;
-                    background: white;
-                    font: inherit;
-                ">
-            {% for count in [10, 25, 50, 100] %}
-                <option value="{{ count }}"
-                    {% if selected_limit == count %}
-                        selected
-                    {% endif %}>
-                    {{ count }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <button type="submit"
-            style="
-                background: #5279c5;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                padding: 12px 18px;
-                cursor: pointer;
-                font-weight: 600;
-            ">
-        Apply Filters
-    </button>
-
-    <a href="/dashboard/events"
-       style="padding:12px; color:#5279c5;">
-        Clear
-    </a>
-
-</form>
-
-<p class="subtitle">
-    {{ filtered_count }} matching events.
-    Showing up to {{ selected_limit }} records.
-</p>
-
-
-<section class="panel">
-    <h2>Audit Event History</h2>
-    <p class="subtitle">
-        Latest 50 recorded security evaluation events.
-    </p>
-
-    <div style="overflow-x: auto;">
-        <table style="width:100%; border-collapse:collapse; font-size:13px;">
-            <thead>
-                <tr style="text-align:left;">
-                    <th style="padding:12px;">Timestamp</th>
-                    <th style="padding:12px;">Request ID</th>
-                    <th style="padding:12px;">Document</th>
-                    <th style="padding:12px;">Decision</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for event in audit_events %}
-                <tr style="border-top:1px solid #e9e8e3;">
-                    <td style="padding:12px;">
-                        {{ event.timestamp }}
-                    </td>
-                    <td style="padding:12px;">
-                        {{ event.request_id }}
-                    </td>
-                    <td style="padding:12px;">
-                        {{ event.cited_document }}
-                    </td>
-                    <td style="padding:12px;">
-                        {{ event.decision }}
-                    </td>
-                </tr>
                 {% else %}
-                <tr>
-                    <td colspan="4" style="padding:20px;">
-                        No audit events found.
-                    </td>
-                </tr>
+
+                    <p class="subtitle">
+                        No detection rules configured.
+                    </p>
+
                 {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</section>
+            </section>
 
-{% endif %}
+        {% elif page == 'events' %}
 
+            <section class="panel">
+                <h2>Audit Event History</h2>
 
-        <!-- FOOTER -->
+                <p class="subtitle">
+                    Recorded security evaluation events.
+                    Search and filtering are performed on the server.
+                </p>
+
+                <form class="filter-form"
+                      method="get"
+                      action="/dashboard/events">
+
+                    <div class="form-field">
+                        <label for="request_id">
+                            Request ID
+                        </label>
+
+                        <input
+                            id="request_id"
+                            name="request_id"
+                            value="{{ search_request_id | default('') }}"
+                            placeholder="Search request ID"
+                            maxlength="128">
+                    </div>
+
+                    <div class="form-field">
+                        <label for="decision">
+                            Security Decision
+                        </label>
+
+                        <select id="decision" name="decision">
+
+                            {% for value, label in [
+                                ('all', 'All decisions'),
+                                ('supported_by_checks', 'Supported'),
+                                ('unsupported_by_checks', 'Unsupported'),
+                                ('review_required', 'Review required'),
+                                ('evaluation_error', 'Evaluation error')
+                            ] %}
+
+                                <option value="{{ value }}"
+                                    {% if selected_decision | default('all') == value %}
+                                        selected
+                                    {% endif %}>
+                                    {{ label }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="limit">
+                            Results
+                        </label>
+
+                        <select id="limit" name="limit">
+
+                            {% for count in [10, 25, 50, 100] %}
+
+                                <option value="{{ count }}"
+                                    {% if selected_limit | default(50) == count %}
+                                        selected
+                                    {% endif %}>
+                                    {{ count }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <button class="btn" type="submit">
+                        Apply Filters
+                    </button>
+
+                    <a class="clear-link" href="/dashboard/events">
+                        Clear
+                    </a>
+
+                </form>
+
+                <p class="subtitle">
+                    {{ filtered_count | default(total_events) }}
+                    matching events.
+                    Showing up to {{ selected_limit | default(50) }}
+                    records.
+                </p>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Request ID</th>
+                                <th>Document</th>
+                                <th>Decision</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for event in audit_events %}
+
+                                <tr>
+                                    <td>{{ event.timestamp }}</td>
+                                    <td class="request-id">
+                                        {{ event.request_id }}
+                                    </td>
+                                    <td>{{ event.cited_document }}</td>
+                                    <td>{{ event.decision }}</td>
+                                </tr>
+
+                            {% else %}
+
+                                <tr>
+                                    <td colspan="4">
+                                        No audit events found.
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        {% endif %}
 
         <div class="footnote">
             Enterprise AI Security Platform
@@ -916,7 +916,6 @@
         </div>
 
     </main>
-
 </div>
 
 </body>

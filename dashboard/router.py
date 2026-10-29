@@ -102,18 +102,30 @@ def dashboard_home(
 
 
 
+
 @router.get("/monitoring", response_class=HTMLResponse)
 def dashboard_monitoring(
     request: Request,
+    window_minutes: int = Query(
+        default=5,
+        ge=1,
+        le=60,
+    ),
     _: None = Depends(require_dashboard_login),
 ):
     try:
-        report = run_live_monitor(window_minutes=5)
+        report = run_live_monitor(
+            window_minutes=window_minutes
+        )
+
     except Exception:
         raise HTTPException(
             status_code=503,
             detail="Dashboard monitoring unavailable",
         )
+
+    monitoring = report["monitoring"]
+    alerts = monitoring["alerts"]
 
     return templates.TemplateResponse(
         request=request,
@@ -123,15 +135,15 @@ def dashboard_monitoring(
             "dashboard_status": "Development",
             "active_page": "monitoring",
             "total_events": report["valid_events_loaded"],
-            "alert_count": report["monitoring"]["alert_count"],
+            "alert_count": monitoring["alert_count"],
             "high_severity": sum(
-                1 for alert in report["monitoring"]["alerts"]
+                1 for alert in alerts
                 if alert["severity"] == "high"
             ),
             "invalid_lines": report["invalid_lines"],
-            "events_in_window": report["monitoring"]["events_in_window"],
-            "alerts": report["monitoring"]["alerts"],
-            "window_minutes": 5,
+            "events_in_window": monitoring["events_in_window"],
+            "alerts": alerts,
+            "window_minutes": window_minutes,
         },
     )
 
