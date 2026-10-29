@@ -19,6 +19,8 @@ from backend.log_monitor_service import run_live_monitor
 from backend.security_monitor import DETECTION_RULES
 from backend.log_monitor_service import load_audit_events
 
+from fastapi import Query
+
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -154,11 +156,29 @@ def dashboard_rules(
     )
 
 
+
 @router.get("/events", response_class=HTMLResponse)
 def dashboard_events(
     request: Request,
+    request_id: str = Query(default="", max_length=128),
+    decision: str = Query(default="all"),
+    limit: int = Query(default=50, ge=1, le=100),
     _: None = Depends(require_dashboard_login),
 ):
+    allowed_decisions = {
+        "all",
+        "supported_by_checks",
+        "unsupported_by_checks",
+        "review_required",
+        "evaluation_error",
+    }
+
+    if decision not in allowed_decisions:
+        raise HTTPException(
+            status_code=422,
+            detail="Invalid security decision filter",
+        )
+
     try:
         audit_data = load_audit_events()
     except Exception:
@@ -167,12 +187,31 @@ def dashboard_events(
             detail="Audit history temporarily unavailable",
         )
 
-    # Limit event history shown in the browser.
-    recent_events = sorted(
-        audit_data["events"],
+    events = audit_data["events"]
+
+    if decision != "all":
+        events = [
+            event
+            for event in events
+            if event["decision"] == decision
+        ]
+
+    if request_id:
+        events = [
+            event
+            for event in events
+            if request_id.lower()
+            in event["request_id"].lower()
+        ]
+
+    events = sorted(
+        events,
         key=lambda event: event["timestamp"],
         reverse=True,
-    )[:50]
+    )
+
+    filtered_count = len(events)
+    recent_events = events[:limit]
 
     return templates.TemplateResponse(
         request=request,
@@ -184,5 +223,10 @@ def dashboard_events(
             "audit_events": recent_events,
             "total_events": audit_data["valid_events"],
             "invalid_lines": audit_data["invalid_lines"],
+            "filtered_count": filtered_count,
+            "selected_decision": decision,
+            "search_request_id": request_id,
+            "selected_limit": limit,
         },
     )
+
