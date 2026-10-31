@@ -628,27 +628,110 @@
 
                     {% if alerts %}
 
-                        {% for alert in alerts %}
+                      
+                    {% for alert in alerts %}
 
-                            <div class="alert-item">
-                                <div class="alert-header">
-                                    <span class="alert-title">
-                                        {{ alert.rule_name }}
-                                    </span>
+                        <div class="alert-item">
+                            <div class="alert-header">
+                                <span class="alert-title">
+                                    {{ alert.rule_name }}
+                                </span>
 
-                                    <span class="severity {{ alert.severity }}">
-                                        {{ alert.severity | upper }}
-                                    </span>
-                                </div>
-
-                                <p class="alert-details">
-                                    Rule: {{ alert.rule_id }}
-                                    · {{ alert.event_count }} matching events
-                                    · Threshold: {{ alert.threshold }}
-                                </p>
+                                <span class="severity {{ alert.severity }}">
+                                    {{ alert.severity | upper }}
+                                </span>
                             </div>
 
-                        {% endfor %}
+                            <p class="alert-details">
+                                Rule: {{ alert.rule_id }}
+                                · {{ alert.event_count }} matching events
+                                · Threshold: {{ alert.threshold }}
+                            </p>
+
+                            {% if page == 'monitoring' %}
+
+                                {% set investigation = investigations[loop.index0] %}
+
+                                <details style="margin-top:16px;">
+                                    <summary style="
+                                        cursor:pointer;
+                                        color:#5279c5;
+                                        font-weight:600;
+                                        font-size:13px;
+                                    ">
+                                        View Investigation Evidence
+                                        ({{ investigation.evidence_found }} records)
+                                    </summary>
+
+                                    <div style="margin-top:14px;">
+
+                                        <p class="subtitle">
+                                            {{ investigation.investigation_note }}
+                                        </p>
+
+                                        {% for event in investigation.events %}
+
+                                            <div style="
+                                                padding:12px;
+                                                margin-top:10px;
+                                                border:1px solid #e9e8e3;
+                                                border-radius:8px;
+                                                background:white;
+                                            ">
+                                                <div>
+                                                    <strong>Request ID:</strong>
+                                                    {{ event.request_id }}
+                                                </div>
+
+                                                <div>
+                                                    <strong>Decision:</strong>
+                                                    {{ event.decision }}
+                                                </div>
+
+                                                <div>
+                                                    <strong>Document:</strong>
+                                                    {{ event.cited_document }}
+                                                </div>
+
+                                                <div>
+                                                    <strong>Timestamp:</strong>
+                                                    {{ event.timestamp }}
+                                                </div>
+
+                                                <a href="/dashboard/events?request_id={{ event.request_id | urlencode }}"
+                                                style="
+                                                    display:inline-block;
+                                                    margin-top:10px;
+                                                    color:#5279c5;
+                                                    font-size:13px;
+                                                ">
+                                                    View Audit Event
+                                                </a>
+                                            </div>
+
+                                        {% else %}
+
+                                            <p class="subtitle">
+                                                No matching audit evidence found.
+                                            </p>
+
+                                        {% endfor %}
+
+                                        {% if investigation.evidence_missing > 0 %}
+                                            <p class="subtitle">
+                                                {{ investigation.evidence_missing }}
+                                                referenced audit records could not be found.
+                                            </p>
+                                        {% endif %}
+
+                                    </div>
+                                </details>
+
+                            {% endif %}
+                        </div>
+
+                    {% endfor %}
+
 
                     {% else %}
 

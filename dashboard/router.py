@@ -20,6 +20,7 @@ from backend.security_monitor import DETECTION_RULES
 from backend.log_monitor_service import load_audit_events
 
 from fastapi import Query
+from backend.investigation_service import investigate_alert
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -73,6 +74,18 @@ def dashboard_home(
     try:
         report = run_live_monitor(window_minutes=5)
 
+        
+        audit_data = load_audit_events()
+
+        investigations = [
+            investigate_alert(
+                alert=alert,
+                audit_events=audit_data["events"],
+            )
+            for alert in report["monitoring"]["alerts"]
+        ]
+
+
     except Exception:
         raise HTTPException(
             status_code=503,
@@ -97,8 +110,10 @@ def dashboard_home(
             "invalid_lines": report["invalid_lines"],
             "events_in_window": monitoring["events_in_window"],
             "alerts": alerts,
+            "investigations": investigations,
         },
     )
+
 
 
 
@@ -106,17 +121,23 @@ def dashboard_home(
 @router.get("/monitoring", response_class=HTMLResponse)
 def dashboard_monitoring(
     request: Request,
-    window_minutes: int = Query(
-        default=5,
-        ge=1,
-        le=60,
-    ),
+    window_minutes: int = Query(default=5, ge=1, le=60),
     _: None = Depends(require_dashboard_login),
 ):
     try:
         report = run_live_monitor(
             window_minutes=window_minutes
         )
+
+        audit_data = load_audit_events()
+
+        investigations = [
+            investigate_alert(
+                alert=alert,
+                audit_events=audit_data["events"],
+            )
+            for alert in report["monitoring"]["alerts"]
+        ]
 
     except Exception:
         raise HTTPException(
@@ -144,8 +165,10 @@ def dashboard_monitoring(
             "events_in_window": monitoring["events_in_window"],
             "alerts": alerts,
             "window_minutes": window_minutes,
+            "investigations": investigations,
         },
     )
+
 
 
 @router.get("/rules", response_class=HTMLResponse)
