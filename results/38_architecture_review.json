@@ -1,0 +1,140 @@
+{
+  "experiment": "38_architecture_security_review",
+  "generated_at": "2026-10-31T22:24:00.766708+00:00",
+  "review_type": "static_component_inventory",
+  "components_checked": 11,
+  "missing_files": [],
+  "missing_functions": [
+    {
+      "file": "backend/main.py",
+      "functions": [
+        "chat_rag"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "file": "backend/main.py",
+      "status": "present",
+      "functions": [
+        "chat",
+        "evaluate_security",
+        "get_security_monitoring",
+        "get_security_service",
+        "health",
+        "rag_chat",
+        "request_tracking",
+        "require_monitor_api_key",
+        "root"
+      ],
+      "missing_expected_functions": [
+        "chat_rag"
+      ]
+    },
+    {
+      "file": "backend/llm_service.py",
+      "status": "present",
+      "functions": [
+        "__init__",
+        "generate",
+        "get_llm_service"
+      ],
+      "missing_expected_functions": []
+    },
+    {
+      "file": "backend/retrieval_service.py",
+      "status": "present",
+      "functions": [
+        "__init__",
+        "get_retrieval_service",
+        "search"
+      ],
+      "missing_expected_functions": []
+    },
+    {
+      "file": "backend/citation_validator.py",
+      "status": "present",
+      "functions": [
+        "extract_citations",
+        "validate_citations"
+      ],
+      "missing_expected_functions": []
+    },
+    {
+      "file": "backend/grounding_validator.py",
+      "status": "present",
+      "functions": [
+        "load_policies",
+        "normalize",
+        "verdict",
+        "verify_grounding"
+      ],
+      "missing_expected_functions": []
+    },
+    {
+      "file": "backend/hybrid_grounding.py",
+      "status": "present",
+      "functions": [
+        "get_nli_model",
+        "get_nli_prediction",
+        "verify_hybrid_grounding"
+      ],
+      "missing_expected_functions": []
+    },
+    {
+      "file": "backend/security_service.py",
+      "status": "present",
+      "functions": [
+        "__init__",
+        "assess_claim",
+        "to_dict"
+      ],
+      "missing_expected_functions": []
+    },
+    {
+      "file": "backend/audit_logger.py",
+      "status": "present",
+      "functions": [
+        "record_security_evaluation"
+      ],
+      "missing_expected_functions": []
+    },
+    {
+      "file": "backend/security_monitor.py",
+      "status": "present",
+      "functions": [
+        "analyze_security_events",
+        "parse_timestamp"
+      ],
+      "missing_expected_functions": []
+    },
+    {
+      "file": "backend/investigation_service.py",
+      "status": "present",
+      "functions": [
+        "investigate_alert",
+        "investigate_alert_from_logs"
+      ],
+      "missing_expected_functions": []
+    },
+    {
+      "file": "dashboard/router.py",
+      "status": "present",
+      "functions": [
+        "dashboard_events",
+        "dashboard_home",
+        "dashboard_monitoring",
+        "dashboard_rules",
+        "require_dashboard_login"
+      ],
+      "missing_expected_functions": []
+    }
+  ],
+  "limitations": [
+    "Function presence does not establish security.",
+    "No authentication or authorization flow analysis.",
+    "No verification of trust boundaries.",
+    "No data-flow or taint analysis.",
+    "No runtime adversarial testing."
+  ]
+}
