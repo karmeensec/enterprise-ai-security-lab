@@ -5,7 +5,7 @@ import uuid
 from datetime import datetime, timezone
 
 from fastapi import Depends, FastAPI, HTTPException, Request
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from backend.llm_service import (
     MODEL_NAME,
@@ -82,12 +82,18 @@ class RAGChatResponse(ChatResponse):
     citation_validation: CitationValidation
 
 
+
 class SecurityEvaluationRequest(BaseModel):
-    claim: str = Field(min_length=1, max_length=2000)
-    cited_document: str = Field(min_length=1, max_length=100)
-    retrieved_document_ids: list[str] = Field(
+    model_config = ConfigDict(extra="forbid")
+
+    claim: str = Field(
         min_length=1,
-        max_length=20,
+        max_length=2000,
+    )
+
+    cited_document: str = Field(
+        min_length=1,
+        max_length=100,
     )
 
 
@@ -302,6 +308,7 @@ def rag_chat(
 
 
 
+
 @app.post(
     "/security/evaluate",
     response_model=SecurityEvaluationResponse,
@@ -310,6 +317,7 @@ def evaluate_security(
     request: SecurityEvaluationRequest,
     http_request: Request,
     service: AISecurityService = Depends(get_security_service),
+    retriever=Depends(get_retrieval_service),
 ):
     request_id = http_request.state.request_id
     start_time = time.perf_counter()
@@ -318,12 +326,47 @@ def evaluate_security(
     review_required = True
 
     try:
+        # Retrieve evidence on the server.
+        # Client-supplied retrieval IDs are not accepted.
+        documents = retriever.search(
+            request.claim,
+            top_k=3,
+        )
+
+        if not isinstance(documents, list):
+            raise ValueError(
+                "Retrieval service returned invalid results"
+            )
+
+        retrieved_ids = []
+
+        for document in documents:
+            if not isinstance(document, dict):
+                raise ValueError(
+                    "Invalid retrieved document"
+                )
+
+            document_id = document.get("document_id")
+
+            if not isinstance(document_id, str):
+                raise ValueError(
+                    "Retrieved document ID is missing"
+                )
+
+            if not document_id:
+                raise ValueError(
+                    "Retrieved document ID is empty"
+                )
+
+            if document_id not in retrieved_ids:
+                retrieved_ids.append(document_id)
+
         policies = load_policies()
 
         assessment = service.assess_claim(
             claim=request.claim,
             cited_document=request.cited_document,
-            retrieved_document_ids=request.retrieved_document_ids,
+            retrieved_document_ids=retrieved_ids,
             known_document_ids=list(policies.keys()),
         )
 
@@ -345,7 +388,9 @@ def evaluate_security(
 
         raise HTTPException(
             status_code=503,
-            detail="Security evaluation temporarily unavailable",
+            detail=(
+                "Security evaluation temporarily unavailable"
+            ),
         )
 
     finally:
@@ -363,9 +408,8 @@ def evaluate_security(
             )
 
         except Exception:
-            # Audit failures are reported, not silently ignored.
-            # For now, logging is best-effort and does not
-            # change the API's evaluation response.
+            # Logging remains best-effort in this
+            # local development environment.
             logger.exception(
                 "Security audit write failed request_id=%s",
                 request_id,
