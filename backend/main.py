@@ -27,6 +27,7 @@ import secrets
 from fastapi import Header
 from backend.log_monitor_service import run_live_monitor
 from dashboard.router import router as dashboard_router
+from backend.output_guardrail import validate_chat_output
 
 
 logging.basicConfig(level=logging.INFO)
@@ -180,6 +181,7 @@ def health():
     }
 
 
+
 @app.post("/chat", response_model=ChatResponse)
 def chat(
     request: ChatRequest,
@@ -191,6 +193,30 @@ def chat(
     try:
         result = llm.generate(request.message)
 
+        # Experiment 40:
+        # Ordinary /chat has no retrieved policy evidence.
+        # Check the model's response before returning it.
+        guardrail = validate_chat_output(
+            response=result["response"],
+            retrieved_document_ids=[],
+            known_document_ids=[],
+        )
+
+        # Preserve model metadata and generation metrics.
+        result = result.copy()
+        result["response"] = guardrail["response"]
+
+        if not guardrail["allowed"]:
+            # Explicitly distinguish a blocked response
+            # from a successful, unmodified generation.
+            result["status"] = "guardrail_blocked"
+
+            logger.warning(
+                "Chat output blocked request_id=%s reason=%s",
+                request_id,
+                guardrail["reason"],
+            )
+
     except InputTooLongError:
         raise HTTPException(
             status_code=413,
@@ -199,7 +225,8 @@ def chat(
 
     except Exception:
         logger.exception(
-            "AI inference failed request_id=%s",
+            "AI inference or output validation failed "
+            "request_id=%s",
             request_id,
         )
 
@@ -212,6 +239,7 @@ def chat(
         **result,
         request_id=request_id,
     )
+
 
 
 
