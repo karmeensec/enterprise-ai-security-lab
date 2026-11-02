@@ -5,10 +5,10 @@ from fastapi.testclient import TestClient
 from backend.main import app
 from backend.llm_service import get_llm_service
 from backend.retrieval_service import get_retrieval_service
+from backend.rag_security import SAFE_RESPONSE
 
 
 class FakeRetriever:
-    # Simulates the knowledge base used for citation validation
     documents = [
         {"id": "POL-001"},
         {"id": "POL-002"},
@@ -49,6 +49,8 @@ class FakeLLM:
 
 @pytest.fixture
 def client():
+    original = app.dependency_overrides.copy()
+
     app.dependency_overrides[get_llm_service] = (
         lambda: FakeLLM()
     )
@@ -62,6 +64,7 @@ def client():
             yield test_client
     finally:
         app.dependency_overrides.clear()
+        app.dependency_overrides.update(original)
 
 
 def test_rag_response(client):
@@ -71,15 +74,17 @@ def test_rag_response(client):
     )
 
     assert response.status_code == 200
-
     data = response.json()
 
-    assert data["status"] == "success"
+    # Experiment 43: no automatic release.
+    assert data["status"] == "review_required"
+    assert data["response"] == SAFE_RESPONSE
+
     assert data["retrieval_count"] == 1
     assert data["sources"][0]["document_id"] == "POL-001"
-    assert "[POL-001]" in data["response"]
 
-    # Experiment 17: Verify citation validation metadata
+    # These fields describe the original generated
+    # answer, not the fallback displayed to the user.
     validation = data["citation_validation"]
 
     assert validation["status"] == "references_verified"
@@ -87,6 +92,9 @@ def test_rag_response(client):
     assert validation["valid_citations"] == ["POL-001"]
     assert validation["all_references_verified"] is True
     assert validation["claim_support_verified"] is False
+
+    assert data["model"] == "mock-model"
+    assert data["generated_tokens"] == 20
 
 
 def test_rag_request_id(client):
@@ -96,7 +104,6 @@ def test_rag_request_id(client):
     )
 
     assert response.status_code == 200
-
     assert response.json()["request_id"] == (
         response.headers["X-Request-ID"]
     )

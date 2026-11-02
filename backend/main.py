@@ -28,6 +28,7 @@ from fastapi import Header
 from backend.log_monitor_service import run_live_monitor
 from dashboard.router import router as dashboard_router
 from backend.output_guardrail import validate_chat_output
+from backend.rag_security import evaluate_rag_answer
 
 
 logging.basicConfig(level=logging.INFO)
@@ -182,63 +183,143 @@ def health():
 
 
 
-@app.post("/chat", response_model=ChatResponse)
-def chat(
+
+@app.post("/chat/rag", response_model=RAGChatResponse)
+def rag_chat(
     request: ChatRequest,
     http_request: Request,
     llm=Depends(get_llm_service),
+    retriever=Depends(get_retrieval_service),
 ):
     request_id = http_request.state.request_id
 
     try:
-        result = llm.generate(request.message)
-
-        # Experiment 40:
-        # Ordinary /chat has no retrieved policy evidence.
-        # Check the model's response before returning it.
-        guardrail = validate_chat_output(
-            response=result["response"],
-            retrieved_document_ids=[],
-            known_document_ids=[],
+        documents = retriever.search(
+            request.message,
+            top_k=3,
         )
 
-        # Preserve model metadata and generation metrics.
-        result = result.copy()
-        result["response"] = guardrail["response"]
+        if not documents:
+            raise HTTPException(
+                status_code=404,
+                detail="No relevant documents available",
+            )
 
-        if not guardrail["allowed"]:
-            # Explicitly distinguish a blocked response
-            # from a successful, unmodified generation.
+        context = "\n\n".join(
+            (
+                f"[{doc['document_id']}] "
+                f"{doc['title']}\n"
+                f"{doc['content']}"
+            )
+            for doc in documents
+        )
+
+        result = llm.generate(
+            request.message,
+            context=context,
+        )
+
+        sources = [
+            SourceDocument(
+                document_id=doc["document_id"],
+                title=doc["title"],
+                similarity_score=doc["similarity_score"],
+            )
+            for doc in documents
+        ]
+
+        retrieved_ids = [
+            doc["document_id"]
+            for doc in documents
+        ]
+
+        known_ids = [
+            doc["id"]
+            for doc in retriever.documents
+        ]
+
+        # Preserve citation metadata for the ORIGINAL
+        # model output, before replacing the response.
+        citation_result = validate_citations(
+            answer=result["response"],
+            retrieved_document_ids=retrieved_ids,
+            known_document_ids=known_ids,
+        )
+
+        # Experiment 43: RAG-specific assessment.
+        security_result = evaluate_rag_answer(
+            answer=result["response"],
+            retrieved_context=context,
+            retrieved_document_ids=retrieved_ids,
+            known_document_ids=known_ids,
+        )
+
+        decision = security_result["decision"]
+
+        # Do not mutate the model's original result.
+        result = result.copy()
+
+        if decision == "blocked":
+            result["response"] = security_result[
+                "display_response"
+            ]
             result["status"] = "guardrail_blocked"
 
             logger.warning(
-                "Chat output blocked request_id=%s reason=%s",
+                "RAG response blocked request_id=%s reason=%s",
                 request_id,
-                guardrail["reason"],
+                security_result["reason"],
             )
+
+        elif decision == "review_required":
+            result["response"] = security_result[
+                "display_response"
+            ]
+            result["status"] = "review_required"
+
+            logger.info(
+                "RAG response requires review request_id=%s",
+                request_id,
+            )
+
+        else:
+            # Fail closed if a future assessment returns
+            # an unknown or unexpected decision.
+            raise ValueError(
+                "Unsupported RAG security decision"
+            )
+
+        return RAGChatResponse(
+            **result,
+            request_id=request_id,
+            sources=sources,
+            retrieval_count=len(sources),
+            citation_validation=CitationValidation(
+                **citation_result
+            ),
+        )
+
+    except HTTPException:
+        raise
 
     except InputTooLongError:
         raise HTTPException(
             status_code=413,
-            detail="Input exceeds the token limit",
+            detail="RAG input exceeds token limit",
         )
 
     except Exception:
         logger.exception(
-            "AI inference or output validation failed "
+            "RAG request or security evaluation failed "
             "request_id=%s",
             request_id,
         )
 
         raise HTTPException(
             status_code=503,
-            detail="AI service temporarily unavailable",
+            detail="RAG service temporarily unavailable",
         )
 
-    return ChatResponse(
-        **result,
-        request_id=request_id,
-    )
 
 
 
