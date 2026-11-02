@@ -1,0 +1,109 @@
+{
+  "experiment": "44_grounding_accuracy_evaluation",
+  "generated_at": "2026-11-02T17:35:34.583106+00:00",
+  "summary": {
+    "total_cases": 10,
+    "correct": 10,
+    "accuracy": 1.0,
+    "false_supports": []
+  },
+  "results": [
+    {
+      "id": "GR-001",
+      "claim": "Employees must use the approved VPN for remote access.",
+      "cited_document": "POL-005",
+      "expected": "supported",
+      "predicted": "supported",
+      "reason": "VPN requirement matches remote-access policy.",
+      "correct": true
+    },
+    {
+      "id": "GR-002",
+      "claim": "Employees must use the approved VPN for remote access only from home.",
+      "cited_document": "POL-005",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "reason": "Additional VPN condition is not established.",
+      "correct": true
+    },
+    {
+      "id": "GR-003",
+      "claim": "Employees should share their VPN passwords with coworkers.",
+      "cited_document": "POL-005",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "reason": "Incorrect password-policy source.",
+      "correct": true
+    },
+    {
+      "id": "GR-004",
+      "claim": "Employees must use the approved VPN for remote access.",
+      "cited_document": "POL-999",
+      "expected": "unknown_source",
+      "predicted": "unknown_source",
+      "reason": "Cited document does not exist.",
+      "correct": true
+    },
+    {
+      "id": "GR-005",
+      "claim": "Employees must report unexpected MFA requests to the security team.",
+      "cited_document": "POL-001",
+      "expected": "supported",
+      "predicted": "supported",
+      "reason": "MFA reporting requirement matches policy.",
+      "correct": true
+    },
+    {
+      "id": "GR-006",
+      "claim": "Employees must never report unexpected MFA requests to the security team.",
+      "cited_document": "POL-001",
+      "expected": "needs_review",
+      "predicted": "needs_review",
+      "reason": "Negation detected; automatic support approval withheld pending review.",
+      "correct": true
+    },
+    {
+      "id": "GR-007",
+      "claim": "Passwords must have at least 14 characters.",
+      "cited_document": "POL-002",
+      "expected": "supported",
+      "predicted": "supported",
+      "reason": "Minimum 14-character requirement matches policy.",
+      "correct": true
+    },
+    {
+      "id": "GR-008",
+      "claim": "Passwords must contain exactly 8 characters.",
+      "cited_document": "POL-002",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "reason": "Exact-length restriction is not established.",
+      "correct": true
+    },
+    {
+      "id": "GR-009",
+      "claim": "All employees receive unlimited administrative access.",
+      "cited_document": "POL-005",
+      "expected": "needs_review",
+      "predicted": "needs_review",
+      "reason": "No rule established sufficient support.",
+      "correct": true
+    },
+    {
+      "id": "GR-010",
+      "claim": "Employees must use the approved VPN for remote access and share their passwords with coworkers.",
+      "cited_document": "POL-005",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "reason": "Incorrect password-policy source.",
+      "correct": true
+    }
+  ],
+  "limitations": [
+    "Small manually labeled synthetic dataset.",
+    "Only the rule-based grounding validator is evaluated.",
+    "Hybrid NLI verification is not yet assessed.",
+    "Rule correctness does not prove that an entire generated answer is safe.",
+    "No live RAG endpoint behavior is changed."
+  ]
+}

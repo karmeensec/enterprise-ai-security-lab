@@ -1,0 +1,142 @@
+{
+  "experiment": "44_grounding_decision_evaluation",
+  "generated_at": "2026-11-02T18:19:57.126971+00:00",
+  "evaluation_mode": "offline_saved_results",
+  "summary": {
+    "total_cases": 10,
+    "block": 5,
+    "review_required": 3,
+    "release_candidate": 2,
+    "expectation_mismatches": [],
+    "false_release_candidates": []
+  },
+  "limitations": [
+    "Retrieval verification is simulated.",
+    "No live RAG endpoint was called.",
+    "Claims were evaluated individually.",
+    "Release candidates are not authorized for automatic user-facing release.",
+    "The test cases were used to design the decision policy."
+  ],
+  "results": [
+    {
+      "id": "GR-001",
+      "expected_claim_status": "supported",
+      "rule_status": "supported",
+      "hybrid_status": "supported",
+      "simulated_citation_check": true,
+      "expected_action": "release_candidate",
+      "actual_action": "release_candidate",
+      "reason": "both_grounding_checks_support_claim",
+      "matches_expectation": true,
+      "false_release_candidate": false
+    },
+    {
+      "id": "GR-002",
+      "expected_claim_status": "unsupported",
+      "rule_status": "unsupported",
+      "hybrid_status": "needs_review",
+      "simulated_citation_check": true,
+      "expected_action": "block",
+      "actual_action": "block",
+      "reason": "rule_based_negative_evidence",
+      "matches_expectation": true,
+      "false_release_candidate": false
+    },
+    {
+      "id": "GR-003",
+      "expected_claim_status": "unsupported",
+      "rule_status": "unsupported",
+      "hybrid_status": "needs_review",
+      "simulated_citation_check": true,
+      "expected_action": "block",
+      "actual_action": "block",
+      "reason": "rule_based_negative_evidence",
+      "matches_expectation": true,
+      "false_release_candidate": false
+    },
+    {
+      "id": "GR-004",
+      "expected_claim_status": "unknown_source",
+      "rule_status": "unknown_source",
+      "hybrid_status": "unknown_source",
+      "simulated_citation_check": false,
+      "expected_action": "block",
+      "actual_action": "block",
+      "reason": "citation_verification_failed",
+      "matches_expectation": true,
+      "false_release_candidate": false
+    },
+    {
+      "id": "GR-005",
+      "expected_claim_status": "supported",
+      "rule_status": "supported",
+      "hybrid_status": "supported",
+      "simulated_citation_check": true,
+      "expected_action": "release_candidate",
+      "actual_action": "release_candidate",
+      "reason": "both_grounding_checks_support_claim",
+      "matches_expectation": true,
+      "false_release_candidate": false
+    },
+    {
+      "id": "GR-006",
+      "expected_claim_status": "needs_review",
+      "rule_status": "needs_review",
+      "hybrid_status": "needs_review",
+      "simulated_citation_check": true,
+      "expected_action": "review_required",
+      "actual_action": "review_required",
+      "reason": "grounding_not_established",
+      "matches_expectation": true,
+      "false_release_candidate": false
+    },
+    {
+      "id": "GR-007",
+      "expected_claim_status": "supported",
+      "rule_status": "supported",
+      "hybrid_status": "needs_review",
+      "simulated_citation_check": true,
+      "expected_action": "review_required",
+      "actual_action": "review_required",
+      "reason": "grounding_not_established",
+      "matches_expectation": true,
+      "false_release_candidate": false
+    },
+    {
+      "id": "GR-008",
+      "expected_claim_status": "unsupported",
+      "rule_status": "unsupported",
+      "hybrid_status": "unsupported",
+      "simulated_citation_check": true,
+      "expected_action": "block",
+      "actual_action": "block",
+      "reason": "rule_based_negative_evidence",
+      "matches_expectation": true,
+      "false_release_candidate": false
+    },
+    {
+      "id": "GR-009",
+      "expected_claim_status": "needs_review",
+      "rule_status": "needs_review",
+      "hybrid_status": "needs_review",
+      "simulated_citation_check": true,
+      "expected_action": "review_required",
+      "actual_action": "review_required",
+      "reason": "grounding_not_established",
+      "matches_expectation": true,
+      "false_release_candidate": false
+    },
+    {
+      "id": "GR-010",
+      "expected_claim_status": "unsupported",
+      "rule_status": "unsupported",
+      "hybrid_status": "needs_review",
+      "simulated_citation_check": true,
+      "expected_action": "block",
+      "actual_action": "block",
+      "reason": "rule_based_negative_evidence",
+      "matches_expectation": true,
+      "false_release_candidate": false
+    }
+  ]
+}

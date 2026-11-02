@@ -1,0 +1,233 @@
+{
+  "experiment": "44_hybrid_grounding_evaluation",
+  "generated_at": "2026-11-02T17:40:16.079769+00:00",
+  "model": "cross-encoder/nli-deberta-v3-small",
+  "summary": {
+    "total_cases": 10,
+    "exact_matches": 6,
+    "exact_match_accuracy": 0.6,
+    "false_support_ids": [],
+    "abstention_ids": [
+      "GR-002",
+      "GR-003",
+      "GR-006",
+      "GR-007",
+      "GR-009",
+      "GR-010"
+    ],
+    "abstention_count": 6,
+    "supported_cases_expected": 3,
+    "supported_cases_approved": 2
+  },
+  "results": [
+    {
+      "id": "GR-001",
+      "claim": "Employees must use the approved VPN for remote access.",
+      "cited_document": "POL-005",
+      "expected": "supported",
+      "rule_prediction": "supported",
+      "hybrid_prediction": "supported",
+      "exact_match": true,
+      "false_support": false,
+      "abstained": false,
+      "nli": {
+        "label": "entailment",
+        "confidence": 0.9946,
+        "probabilities": {
+          "contradiction": 0.0001,
+          "entailment": 0.9946,
+          "neutral": 0.0053
+        }
+      },
+      "reason": "Rule-based and NLI checks agree on support."
+    },
+    {
+      "id": "GR-002",
+      "claim": "Employees must use the approved VPN for remote access only from home.",
+      "cited_document": "POL-005",
+      "expected": "unsupported",
+      "rule_prediction": "unsupported",
+      "hybrid_prediction": "needs_review",
+      "exact_match": false,
+      "false_support": false,
+      "abstained": true,
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.9973,
+        "probabilities": {
+          "contradiction": 0.0016,
+          "entailment": 0.0011,
+          "neutral": 0.9973
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "id": "GR-003",
+      "claim": "Employees should share their VPN passwords with coworkers.",
+      "cited_document": "POL-005",
+      "expected": "unsupported",
+      "rule_prediction": "unsupported",
+      "hybrid_prediction": "needs_review",
+      "exact_match": false,
+      "false_support": false,
+      "abstained": true,
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.9906,
+        "probabilities": {
+          "contradiction": 0.0092,
+          "entailment": 0.0002,
+          "neutral": 0.9906
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "id": "GR-004",
+      "claim": "Employees must use the approved VPN for remote access.",
+      "cited_document": "POL-999",
+      "expected": "unknown_source",
+      "rule_prediction": "unknown_source",
+      "hybrid_prediction": "unknown_source",
+      "exact_match": true,
+      "false_support": false,
+      "abstained": false,
+      "nli": null,
+      "reason": "Cited policy does not exist."
+    },
+    {
+      "id": "GR-005",
+      "claim": "Employees must report unexpected MFA requests to the security team.",
+      "cited_document": "POL-001",
+      "expected": "supported",
+      "rule_prediction": "supported",
+      "hybrid_prediction": "supported",
+      "exact_match": true,
+      "false_support": false,
+      "abstained": false,
+      "nli": {
+        "label": "entailment",
+        "confidence": 0.9508,
+        "probabilities": {
+          "contradiction": 0.0023,
+          "entailment": 0.9508,
+          "neutral": 0.0469
+        }
+      },
+      "reason": "Rule-based and NLI checks agree on support."
+    },
+    {
+      "id": "GR-006",
+      "claim": "Employees must never report unexpected MFA requests to the security team.",
+      "cited_document": "POL-001",
+      "expected": "needs_review",
+      "rule_prediction": "needs_review",
+      "hybrid_prediction": "needs_review",
+      "exact_match": true,
+      "false_support": false,
+      "abstained": true,
+      "nli": {
+        "label": "contradiction",
+        "confidence": 0.9991,
+        "probabilities": {
+          "contradiction": 0.9991,
+          "entailment": 0.0,
+          "neutral": 0.0009
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "id": "GR-007",
+      "claim": "Passwords must have at least 14 characters.",
+      "cited_document": "POL-002",
+      "expected": "supported",
+      "rule_prediction": "supported",
+      "hybrid_prediction": "needs_review",
+      "exact_match": false,
+      "false_support": false,
+      "abstained": true,
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.675,
+        "probabilities": {
+          "contradiction": 0.0002,
+          "entailment": 0.3248,
+          "neutral": 0.675
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "id": "GR-008",
+      "claim": "Passwords must contain exactly 8 characters.",
+      "cited_document": "POL-002",
+      "expected": "unsupported",
+      "rule_prediction": "unsupported",
+      "hybrid_prediction": "unsupported",
+      "exact_match": true,
+      "false_support": false,
+      "abstained": false,
+      "nli": {
+        "label": "contradiction",
+        "confidence": 0.9879,
+        "probabilities": {
+          "contradiction": 0.9879,
+          "entailment": 0.0002,
+          "neutral": 0.012
+        }
+      },
+      "reason": "Rule-based and NLI checks agree on contradiction."
+    },
+    {
+      "id": "GR-009",
+      "claim": "All employees receive unlimited administrative access.",
+      "cited_document": "POL-005",
+      "expected": "needs_review",
+      "rule_prediction": "needs_review",
+      "hybrid_prediction": "needs_review",
+      "exact_match": true,
+      "false_support": false,
+      "abstained": true,
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.7199,
+        "probabilities": {
+          "contradiction": 0.2799,
+          "entailment": 0.0002,
+          "neutral": 0.7199
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    },
+    {
+      "id": "GR-010",
+      "claim": "Employees must use the approved VPN for remote access and share their passwords with coworkers.",
+      "cited_document": "POL-005",
+      "expected": "unsupported",
+      "rule_prediction": "unsupported",
+      "hybrid_prediction": "needs_review",
+      "exact_match": false,
+      "false_support": false,
+      "abstained": true,
+      "nli": {
+        "label": "neutral",
+        "confidence": 0.9994,
+        "probabilities": {
+          "contradiction": 0.0003,
+          "entailment": 0.0003,
+          "neutral": 0.9994
+        }
+      },
+      "reason": "Evidence is insufficient, confidence is below threshold, or the two validators disagree."
+    }
+  ],
+  "limitations": [
+    "Small manually labeled synthetic dataset.",
+    "NLI confidence values are not calibrated safety probabilities.",
+    "Review-required classifications are abstentions, not verified rejections.",
+    "Whole-answer citation attribution and mixed-claim verification remain incomplete.",
+    "No production automatic-release policy is established by this evaluation."
+  ]
+}
