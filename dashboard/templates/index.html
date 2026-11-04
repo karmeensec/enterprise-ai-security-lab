@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -273,6 +272,27 @@
             color: #b44848;
         }
 
+        .severity.critical {
+            background: #6f2638;
+            color: #ffffff;
+        }
+
+        .evidence-record {
+            padding: 14px;
+            margin-top: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #ffffff;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .evidence-record > div { margin-bottom: 8px; }
+        .evidence-record strong { color: var(--text); }
+        .evidence-link { color: var(--blue); font-weight: 600; font-size: 13px; }
+        .evidence-warning { color: #a34848; font-weight: 600; }
+        .investigation-summary { color: var(--muted); font-size: 12px; margin: 10px 0; }
+
         .severity.medium {
             background: #fff3dc;
             color: #946419;
@@ -433,6 +453,31 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Experiment 49.6: local analyst case-management controls */
+        .case-panel { margin-top: 22px; }
+        .case-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+        .case-toolbar h2 { margin: 0 0 6px; }
+        .case-grid { display: grid; gap: 14px; margin-top: 20px; }
+        .case-entry { padding: 18px; background: #fcfbf8; border: 1px solid var(--border); border-radius: 12px; }
+        .case-header { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+        .case-meta { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; margin-top: 8px; }
+        .case-status { display: inline-block; background: #e9effb; color: #3e67ba; padding: 6px 9px; border-radius: 7px; font-size: 12px; font-weight: 700; }
+        .case-fields { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-top: 12px; }
+        .case-field { display: flex; flex-direction: column; gap: 7px; flex: 1; min-width: 170px; }
+        .case-field label { color: var(--muted); font-size: 12px; font-weight: 650; }
+        .case-field input, .case-field textarea, .case-field select { width: 100%; font: inherit; color: var(--text); background: #fff; border: 1px solid #d9dfe6; border-radius: 8px; padding: 10px; }
+        .case-field textarea { min-height: 74px; resize: vertical; }
+        .case-message { font-size: 13px; margin-top: 12px; color: var(--muted); }
+        .case-message.error { color: #b44848; }
+        .case-message.success { color: #28735b; }
+        .case-secondary { color: var(--blue); background: transparent; border: 1px solid #b8c8e6; border-radius: 8px; padding: 9px 12px; cursor: pointer; font-weight: 650; }
+        .case-history { margin-top: 13px; border-top: 1px solid var(--border); padding-top: 12px; }
+        .case-history-item { margin-top: 10px; padding: 10px; background: #fff; border-radius: 8px; border: 1px solid var(--border); overflow-wrap: anywhere; font-size: 12px; }
+        .case-note { white-space: pre-wrap; overflow-wrap: anywhere; }
+        .case-action { margin-top: 12px; }
+        .case-hidden { display: none !important; }
+        .case-trigger { margin-top: 10px; }
     </style>
 </head>
 
@@ -460,7 +505,7 @@
         <a href="/dashboard/"
            class="nav-item {% if page == 'overview' %}active{% endif %}"
            {% if page == 'overview' %}aria-current="page"{% endif %}>
-            ◈ &nbsp; Overview
+            ● &nbsp; Overview
         </a>
 
         <a href="/dashboard/monitoring"
@@ -481,6 +526,10 @@
             ▤ &nbsp; Audit Events
         </a>
 
+
+        <a href="/dashboard/monitoring#case-management" class="nav-item">
+            ▣ &nbsp; Investigation Cases
+        </a>
     </aside>
 
     <main class="main">
@@ -628,7 +677,7 @@
 
                     {% if alerts %}
 
-                      
+
                     {% for alert in alerts %}
 
                         <div class="alert-item">
@@ -647,6 +696,14 @@
                                 · {{ alert.event_count }} matching events
                                 · Threshold: {{ alert.threshold }}
                             </p>
+
+
+                            {% if page == 'monitoring' %}
+                                <button class="case-secondary case-trigger" type="button"
+                                        data-open-rule="{{ alert.rule_id | e }}">
+                                    Open Investigation Case
+                                </button>
+                            {% endif %}
 
                             {% if page == 'monitoring' %}
 
@@ -669,52 +726,33 @@
                                             {{ investigation.investigation_note }}
                                         </p>
 
+                                        <p class="investigation-summary">
+                                            Evidence found: {{ investigation.evidence_found }} / {{ investigation.evidence_expected }}
+                                            {% if investigation.evidence_missing %}
+                                                <span class="evidence-warning">· {{ investigation.evidence_missing }} missing</span>
+                                            {% endif %}
+                                        </p>
+
                                         {% for event in investigation.events %}
-
-                                            <div style="
-                                                padding:12px;
-                                                margin-top:10px;
-                                                border:1px solid #e9e8e3;
-                                                border-radius:8px;
-                                                background:white;
-                                            ">
-                                                <div>
-                                                    <strong>Request ID:</strong>
-                                                    {{ event.request_id }}
-                                                </div>
-
-                                                <div>
-                                                    <strong>Decision:</strong>
-                                                    {{ event.decision }}
-                                                </div>
-
-                                                <div>
-                                                    <strong>Document:</strong>
-                                                    {{ event.cited_document }}
-                                                </div>
-
-                                                <div>
-                                                    <strong>Timestamp:</strong>
-                                                    {{ event.timestamp }}
-                                                </div>
-
-                                                <a href="/dashboard/events?request_id={{ event.request_id | urlencode }}"
-                                                style="
-                                                    display:inline-block;
-                                                    margin-top:10px;
-                                                    color:#5279c5;
-                                                    font-size:13px;
-                                                ">
+                                            <div class="evidence-record">
+                                                <div><strong>Request ID:</strong> {{ event.request_id }}</div>
+                                                <div><strong>Timestamp:</strong> {{ event.timestamp }}</div>
+                                                <div><strong>Decision:</strong> {{ event.decision }}</div>
+                                                {% if event.event_type | default('') == 'ai.security.document_integrity_failure' %}
+                                                    <div><strong>Event:</strong> Knowledge-base integrity failure</div>
+                                                    <div><strong>Affected API route:</strong> {{ event.route }}</div>
+                                                    <div><strong>Detection stage:</strong> {{ event.stage | replace('_', ' ') }}</div>
+                                                    <div><strong>Review required:</strong> {{ 'Yes' if event.review_required else 'No' }}</div>
+                                                {% else %}
+                                                    <div><strong>Policy document:</strong> {{ event.cited_document | default('Unavailable') }}</div>
+                                                {% endif %}
+                                                <a class="evidence-link"
+                                                   href="/dashboard/events?request_id={{ event.request_id | urlencode }}">
                                                     View Audit Event
                                                 </a>
                                             </div>
-
                                         {% else %}
-
-                                            <p class="subtitle">
-                                                No matching audit evidence found.
-                                            </p>
-
+                                            <p class="subtitle">No matching audit evidence found.</p>
                                         {% endfor %}
 
                                         {% if investigation.evidence_missing > 0 %}
@@ -736,7 +774,7 @@
                     {% else %}
 
                         <div class="empty-state">
-                            <div class="empty-icon">◎</div>
+                            <div class="empty-icon">●Ž</div>
 
                             <div class="empty-title">
                                 No alerts in the current window
@@ -822,6 +860,22 @@
 
             </section>
 
+
+            {% if page == 'monitoring' %}
+                <section id="case-management" class="panel case-panel" aria-labelledby="case-title">
+                    <div class="case-toolbar">
+                        <div>
+                            <h2 id="case-title">Investigation Case Management</h2>
+                            <p class="subtitle">Review cases, record findings, and move them from open to investigating to resolved. Case data is saved separately from the audit log.</p>
+                        </div>
+                        <button id="case-refresh" class="case-secondary" type="button">Refresh Cases</button>
+                    </div>
+                    <div id="case-message" class="case-message" role="status" aria-live="polite">Loading investigation cases…</div>
+                    <div id="case-list" class="case-grid"></div>
+                    <p class="health-note">To open a case, use <strong>Open Investigation Case</strong> on an active alert above. Case creation checks the last five minutes of alerts on the server, even when this dashboard shows a longer window. These are development-only local case records, not a production incident-management system. Do not enter secrets or full prompts in analyst notes.</p>
+                </section>
+            {% endif %}
+
         {% elif page == 'rules' %}
 
             <section class="panel">
@@ -867,7 +921,7 @@
                 <h2>Audit Event History</h2>
 
                 <p class="subtitle">
-                    Recorded security evaluation events.
+                    Recorded security evaluations and knowledge-base integrity events.
                     Search and filtering are performed on the server.
                 </p>
 
@@ -959,31 +1013,27 @@
                             <tr>
                                 <th>Timestamp</th>
                                 <th>Request ID</th>
-                                <th>Document</th>
+                                <th>Event / Document</th>
                                 <th>Decision</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             {% for event in audit_events %}
-
                                 <tr>
                                     <td>{{ event.timestamp }}</td>
-                                    <td class="request-id">
-                                        {{ event.request_id }}
+                                    <td class="request-id">{{ event.request_id }}</td>
+                                    <td>
+                                        {% if event.event_type | default('') == 'ai.security.document_integrity_failure' %}
+                                            <strong>Document integrity failure</strong>
+                                            <div class="subtitle">{{ event.route }} · {{ event.stage | replace('_', ' ') }}</div>
+                                        {% else %}
+                                            {{ event.cited_document | default('Unavailable') }}
+                                        {% endif %}
                                     </td>
-                                    <td>{{ event.cited_document }}</td>
                                     <td>{{ event.decision }}</td>
                                 </tr>
-
                             {% else %}
-
-                                <tr>
-                                    <td colspan="4">
-                                        No audit events found.
-                                    </td>
-                                </tr>
-
+                                <tr><td colspan="4">No audit events found.</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -1000,6 +1050,183 @@
 
     </main>
 </div>
+
+
+{% if page == 'monitoring' %}
+<script>
+(function () {
+    "use strict";
+    const list = document.getElementById("case-list");
+    const message = document.getElementById("case-message");
+    const refresh = document.getElementById("case-refresh");
+
+    function node(tag, text, className) {
+        const element = document.createElement(tag);
+        if (text !== undefined && text !== null) element.textContent = String(text);
+        if (className) element.className = className;
+        return element;
+    }
+    function setMessage(text, type) {
+        message.textContent = text;
+        message.className = "case-message" + (type ? " " + type : "");
+    }
+    async function api(path, options) {
+        const response = await fetch(path, {
+            credentials: "same-origin",
+            cache: "no-store",
+            ...(options || {})
+        });
+        let result;
+        try { result = await response.json(); }
+        catch (_) { result = null; }
+        if (!response.ok) {
+            const detail = result && result.detail;
+            throw new Error(typeof detail === "string" ? detail : "Request failed (HTTP " + response.status + ")");
+        }
+        return result;
+    }
+    function writeOptions(payload) {
+        return {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: JSON.stringify(payload)
+        };
+    }
+    function labeledField(labelText, control) {
+        const wrapper = node("div", null, "case-field");
+        const label = node("label", labelText);
+        const id = "case-input-" + Math.random().toString(36).slice(2);
+        label.htmlFor = id;
+        control.id = id;
+        wrapper.append(label, control);
+        return wrapper;
+    }
+    function createHistory(history, parent) {
+        const section = node("div", null, "case-history");
+        section.append(node("strong", "Revision history"));
+        history.forEach(function (revision) {
+            const entry = node("div", null, "case-history-item");
+            entry.append(node("div", "Revision " + revision.revision + " · " + revision.status + " · " + revision.disposition));
+            entry.append(node("div", "Updated: " + revision.updated_at + " · Analyst: " + revision.analyst));
+            if (revision.notes) entry.append(node("div", revision.notes, "case-note"));
+            section.append(entry);
+        });
+        parent.append(section);
+    }
+    async function loadHistory(caseId, target, toggle) {
+        if (!target.classList.contains("case-hidden")) {
+            target.classList.add("case-hidden");
+            toggle.textContent = "View History";
+            return;
+        }
+        toggle.disabled = true;
+        try {
+            const data = await api("/dashboard/cases/" + encodeURIComponent(caseId));
+            target.replaceChildren();
+            createHistory(data.history || [], target);
+            target.classList.remove("case-hidden");
+            toggle.textContent = "Hide History";
+        } catch (error) { setMessage(error.message, "error"); }
+        finally { toggle.disabled = false; }
+    }
+    function renderCase(record) {
+        const card = node("article", null, "case-entry");
+        const header = node("div", null, "case-header");
+        header.append(node("strong", record.rule_id));
+        header.append(node("span", record.status, "case-status"));
+        card.append(header);
+        card.append(node("div", "Case ID: " + record.case_id, "case-meta"));
+        card.append(node("div", "Created: " + record.created_at + " · Last updated: " + record.updated_at, "case-meta"));
+        card.append(node("div", "Disposition: " + record.disposition + " · Revision: " + record.revision, "case-meta"));
+        card.append(node("div", "Request IDs: " + (record.request_ids || []).join(", "), "case-meta"));
+        if (record.notes) {
+            card.append(node("strong", "Latest analyst note:"));
+            card.append(node("p", record.notes, "case-note"));
+        }
+        const historyButton = node("button", "View History", "case-secondary case-action");
+        historyButton.type = "button";
+        const history = node("div", null, "case-hidden");
+        historyButton.addEventListener("click", function () { loadHistory(record.case_id, history, historyButton); });
+        card.append(historyButton, history);
+        if (record.status !== "resolved") {
+            const form = node("form", null, "case-action");
+            const fields = node("div", null, "case-fields");
+            const next = record.status === "open" ? "investigating" : "resolved";
+            const notes = node("textarea");
+            notes.maxLength = 2000;
+            notes.required = true;
+            notes.placeholder = "Document findings (no credentials or prompts)";
+            fields.append(labeledField("Analyst notes", notes));
+            let disposition = null;
+            if (next === "resolved") {
+                disposition = node("select");
+                [
+                    ["", "Choose a final disposition"],
+                    ["benign", "Benign"],
+                    ["confirmed_incident", "Confirmed incident"],
+                    ["inconclusive", "Inconclusive"]
+                ].forEach(function (optionData) {
+                    const option = node("option", optionData[1]);
+                    option.value = optionData[0];
+                    disposition.append(option);
+                });
+                disposition.required = true;
+                fields.append(labeledField("Final disposition", disposition));
+            }
+            form.append(fields);
+            const submit = node("button", "Move to " + next, "btn case-action");
+            submit.type = "submit";
+            form.append(submit);
+            form.addEventListener("submit", async function (event) {
+                event.preventDefault();
+                submit.disabled = true;
+                try {
+                    await api("/dashboard/cases/" + encodeURIComponent(record.case_id) + "/transition",
+                        writeOptions({ status: next, disposition: disposition ? disposition.value : "pending", notes: notes.value }));
+                    setMessage("Case updated.", "success");
+                    await loadCases(true);
+                } catch (error) { setMessage(error.message, "error"); }
+                finally { submit.disabled = false; }
+            });
+            card.append(form);
+        }
+        return card;
+    }
+    async function loadCases(keepMessage) {
+        if (!keepMessage) setMessage("Loading investigation cases…");
+        try {
+            const data = await api("/dashboard/cases");
+            list.replaceChildren();
+            const cases = data.cases || [];
+            if (cases.length === 0) list.append(node("p", "No investigation cases have been opened yet.", "subtitle"));
+            cases.slice().reverse().forEach(function (record) { list.append(renderCase(record)); });
+            if (!keepMessage) setMessage(cases.length + " investigation case(s) loaded.");
+        } catch (error) { setMessage(error.message, "error"); }
+    }
+    document.querySelectorAll("[data-open-rule]").forEach(function (button) {
+        button.addEventListener("click", async function () {
+            const ruleId = button.getAttribute("data-open-rule");
+            const notes = window.prompt("Optional opening note for " + ruleId + " (do not enter secrets):", "");
+            if (notes === null) return;
+            if (notes.length > 2000) { setMessage("Note must be at most 2000 characters.", "error"); return; }
+            button.disabled = true;
+            try {
+                const created = await api("/dashboard/cases", writeOptions({ rule_id: ruleId, notes: notes }));
+                setMessage("Investigation case opened: " + created.case_id, "success");
+                await loadCases(true);
+                document.getElementById("case-management").scrollIntoView({ behavior: "smooth" });
+            } catch (error) { setMessage(error.message, "error"); }
+            finally { button.disabled = false; }
+        });
+    });
+    refresh.addEventListener("click", function () { loadCases(false); });
+    loadCases(false);
+})();
+</script>
+{% endif %}
 
 </body>
 </html>
