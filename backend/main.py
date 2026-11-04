@@ -5,6 +5,7 @@ import uuid
 from datetime import datetime, timezone
 
 from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from backend.llm_service import (
@@ -19,7 +20,11 @@ from backend.citation_validator import validate_citations
 from backend.security_service import AISecurityService
 from backend.grounding_validator import load_policies
 
-from backend.audit_logger import record_security_evaluation
+from backend.audit_logger import (
+    record_security_evaluation,
+    record_document_integrity_failure,
+)
+from backend.document_integrity import DocumentIntegrityError
 
 import os
 import secrets
@@ -41,6 +46,48 @@ app = FastAPI(
 )
 
 app.include_router(dashboard_router)
+
+
+@app.exception_handler(DocumentIntegrityError)
+async def document_integrity_exception_handler(
+    request: Request,
+    exc: DocumentIntegrityError,
+):
+    """Fail closed even when a dependency cannot initialize."""
+    request_id = getattr(request.state, "request_id", "unavailable")
+    route = request.url.path
+    stage = getattr(
+        request.state, "integrity_stage", "dependency_initialization"
+    )
+
+    # Do not send exception text, policy contents, hashes or paths to clients.
+    logger.error(
+        "Document integrity verification failed request_id=%s route=%s stage=%s",
+        request_id,
+        route,
+        stage,
+    )
+
+    if route in {"/chat/rag", "/security/evaluate"}:
+        try:
+            record_document_integrity_failure(
+                request_id=request_id,
+                route=route,
+                stage=stage,
+            )
+        except Exception:
+            # Audit failures must never bypass the security block.
+            logger.exception(
+                "Integrity audit write failed request_id=%s",
+                request_id,
+            )
+
+    detail = (
+        "Security evaluation temporarily unavailable"
+        if route == "/security/evaluate"
+        else "RAG service temporarily unavailable"
+    )
+    return JSONResponse(status_code=503, content={"detail": detail})
 
 class ChatRequest(BaseModel):
     message: str = Field(
@@ -256,6 +303,7 @@ def rag_chat(
     request_id = http_request.state.request_id
 
     try:
+        http_request.state.integrity_stage = "retrieval"
         documents = retriever.search(
             request.message,
             top_k=3,
@@ -352,6 +400,10 @@ def rag_chat(
     except HTTPException:
         raise
 
+    except DocumentIntegrityError:
+        # Allow the global exception handler to audit and sanitize the failure.
+        raise
+
     except InputTooLongError:
         raise HTTPException(
             status_code=413,
@@ -388,6 +440,7 @@ def evaluate_security(
     try:
         # Retrieve evidence on the server.
         # Client-supplied retrieval IDs are not accepted.
+        http_request.state.integrity_stage = "retrieval"
         documents = retriever.search(
             request.claim,
             top_k=3,
@@ -439,6 +492,10 @@ def evaluate_security(
         review_required = response.review_required
 
         return response
+
+    except DocumentIntegrityError:
+        # The global handler logs the integrity event and returns HTTP 503.
+        raise
 
     except Exception:
         logger.exception(

@@ -5,6 +5,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from threading import Lock
 
+import re
+import uuid
+
 
 ROOT = Path(__file__).resolve().parent.parent
 AUDIT_DIRECTORY = ROOT / "logs"
@@ -100,6 +103,76 @@ def record_security_evaluation(
     logger.info(
         "Security audit event recorded request_id=%s",
         request_id,
+    )
+
+    return event
+
+
+def record_document_integrity_failure(
+    request_id: str,
+    route: str,
+    stage: str = "retrieval",
+) -> dict:
+    """
+    Record a knowledge-base integrity failure.
+
+    Does not store prompts, document contents,
+    file paths, hashes, or exception messages.
+    """
+
+    try:
+        uuid.UUID(request_id)
+    except (ValueError, TypeError, AttributeError):
+        raise ValueError("Invalid request ID")
+
+    if route not in {
+        "/chat/rag",
+        "/security/evaluate",
+    }:
+        raise ValueError("Invalid integrity event route")
+
+    if stage not in {
+        "retrieval",
+        "dependency_initialization",
+    }:
+        raise ValueError("Invalid integrity event stage")
+
+    event = {
+        "timestamp": datetime.now(
+            timezone.utc
+        ).isoformat(),
+        "event_type": "ai.security.document_integrity_failure",
+        "request_id": request_id,
+        "route": route,
+        "stage": stage,
+        "decision": "blocked",
+        "review_required": True,
+    }
+
+    serialized = json.dumps(
+        event,
+        ensure_ascii=False,
+        allow_nan=False,
+    )
+
+    AUDIT_DIRECTORY.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    with _write_lock:
+        with AUDIT_FILE.open(
+            "a",
+            encoding="utf-8",
+        ) as file:
+            file.write(serialized + "\n")
+
+    logger.warning(
+        "Document integrity failure recorded "
+        "request_id=%s route=%s stage=%s",
+        request_id,
+        route,
+        stage,
     )
 
     return event
