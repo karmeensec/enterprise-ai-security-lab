@@ -184,6 +184,68 @@ def health():
 
 
 
+
+@app.post("/chat", response_model=ChatResponse)
+def chat(
+    request: ChatRequest,
+    http_request: Request,
+    llm=Depends(get_llm_service),
+):
+    request_id = http_request.state.request_id
+
+    try:
+        result = llm.generate(request.message)
+
+        # Preserve the original generation metadata.
+        result = result.copy()
+
+        # Ordinary chat has no verified retrieval evidence.
+        # Policy citations must therefore not be trusted.
+        known_ids = list(load_policies().keys())
+
+        guardrail = validate_chat_output(
+            response=result["response"],
+            retrieved_document_ids=[],
+            known_document_ids=known_ids,
+        )
+
+
+        if not guardrail["allowed"]:
+            result["response"] = guardrail["response"]
+            result["status"] = "guardrail_blocked"
+
+            logger.warning(
+                "Chat output blocked request_id=%s reason=%s",
+                request_id,
+                guardrail["reason"],
+            )
+
+        return ChatResponse(
+            **result,
+            request_id=request_id,
+        )
+
+    except InputTooLongError:
+        raise HTTPException(
+            status_code=413,
+            detail="Chat input exceeds token limit",
+        )
+
+    except Exception:
+        logger.exception(
+            "Chat inference failed request_id=%s",
+            request_id,
+        )
+
+        raise HTTPException(
+            status_code=503,
+            detail="AI service temporarily unavailable",
+        )
+
+
+
+
+
 @app.post("/chat/rag", response_model=RAGChatResponse)
 def rag_chat(
     request: ChatRequest,
@@ -238,15 +300,14 @@ def rag_chat(
             for doc in retriever.documents
         ]
 
-        # Preserve citation metadata for the ORIGINAL
-        # model output, before replacing the response.
+        # Citation metadata describes the original model answer,
+        # not the replacement fallback shown to the user.
         citation_result = validate_citations(
             answer=result["response"],
             retrieved_document_ids=retrieved_ids,
             known_document_ids=known_ids,
         )
 
-        # Experiment 43: RAG-specific assessment.
         security_result = evaluate_rag_answer(
             answer=result["response"],
             retrieved_context=context,
@@ -255,14 +316,10 @@ def rag_chat(
         )
 
         decision = security_result["decision"]
-
-        # Do not mutate the model's original result.
         result = result.copy()
 
         if decision == "blocked":
-            result["response"] = security_result[
-                "display_response"
-            ]
+            result["response"] = security_result["display_response"]
             result["status"] = "guardrail_blocked"
 
             logger.warning(
@@ -272,9 +329,7 @@ def rag_chat(
             )
 
         elif decision == "review_required":
-            result["response"] = security_result[
-                "display_response"
-            ]
+            result["response"] = security_result["display_response"]
             result["status"] = "review_required"
 
             logger.info(
@@ -283,20 +338,15 @@ def rag_chat(
             )
 
         else:
-            # Fail closed if a future assessment returns
-            # an unknown or unexpected decision.
-            raise ValueError(
-                "Unsupported RAG security decision"
-            )
+            # Unknown decisions must never release the answer.
+            raise ValueError("Unsupported RAG security decision")
 
         return RAGChatResponse(
             **result,
             request_id=request_id,
             sources=sources,
             retrieval_count=len(sources),
-            citation_validation=CitationValidation(
-                **citation_result
-            ),
+            citation_validation=CitationValidation(**citation_result),
         )
 
     except HTTPException:
@@ -310,112 +360,13 @@ def rag_chat(
 
     except Exception:
         logger.exception(
-            "RAG request or security evaluation failed "
-            "request_id=%s",
+            "RAG request or security evaluation failed request_id=%s",
             request_id,
         )
-
         raise HTTPException(
             status_code=503,
             detail="RAG service temporarily unavailable",
         )
-
-
-
-
-
-@app.post("/chat/rag", response_model=RAGChatResponse)
-def rag_chat(
-    request: ChatRequest,
-    http_request: Request,
-    llm=Depends(get_llm_service),
-    retriever=Depends(get_retrieval_service),
-):
-    request_id = http_request.state.request_id
-
-    try:
-        documents = retriever.search(
-            request.message,
-            top_k=3
-        )
-
-        if not documents:
-            raise HTTPException(
-                status_code=404,
-                detail="No relevant documents available"
-            )
-
-        context = "\n\n".join(
-            (
-                f"[{doc['document_id']}] "
-                f"{doc['title']}\n"
-                f"{doc['content']}"
-            )
-            for doc in documents
-        )
-
-        result = llm.generate(
-            request.message,
-            context=context
-        )
-
-    except HTTPException:
-        raise
-
-    except InputTooLongError:
-        raise HTTPException(
-            status_code=413,
-            detail="RAG input exceeds token limit"
-        )
-
-    except Exception:
-        logger.exception(
-            "RAG request failed request_id=%s",
-            request_id
-        )
-
-        raise HTTPException(
-            status_code=503,
-            detail="RAG service temporarily unavailable"
-        )
-
-    sources = [
-        SourceDocument(
-            document_id=doc["document_id"],
-            title=doc["title"],
-            similarity_score=doc["similarity_score"]
-        )
-        for doc in documents
-    ]
-
-    
-    retrieved_ids = [
-        doc["document_id"]
-        for doc in documents
-    ]
-
-    known_ids = [
-        doc["id"]
-        for doc in retriever.documents
-    ]
-
-    citation_result = validate_citations(
-        answer=result["response"],
-        retrieved_document_ids=retrieved_ids,
-        known_document_ids=known_ids,
-    )
-
-
-    return RAGChatResponse(
-        **result,
-        request_id=request_id,
-        sources=sources,
-        retrieval_count=len(sources),
-        citation_validation=CitationValidation(**citation_result),
-    )
-
-
-
 
 
 @app.post(
