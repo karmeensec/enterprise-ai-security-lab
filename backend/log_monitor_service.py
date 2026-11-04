@@ -9,15 +9,18 @@ from backend.security_monitor import analyze_security_events
 
 MAX_AUDIT_FILE_BYTES = 10 * 1024 * 1024
 
+EVALUATION_EVENT = "ai.security.evaluation"
+INTEGRITY_EVENT = "ai.security.document_integrity_failure"
+
 
 def load_audit_events(
     file_path: Path | None = None,
 ) -> dict:
     """
-    Read and validate local JSONL audit events.
+    Load validated security audit events.
 
-    This is a single-file, on-demand monitoring reader,
-    not yet a continuous or centralized log collector.
+    Supports existing evaluation events and
+    document-integrity failure events.
     """
     path = Path(file_path) if file_path is not None else AUDIT_FILE
 
@@ -46,36 +49,77 @@ def load_audit_events(
                 event = json.loads(line)
 
                 if not isinstance(event, dict):
-                    raise ValueError("Event must be an object")
+                    raise ValueError(
+                        "Event must be a JSON object"
+                    )
 
-                required = (
+                event_type = event.get("event_type")
+
+                common_fields = (
                     "timestamp",
                     "event_type",
                     "request_id",
                     "decision",
-                    "cited_document",
                 )
 
-                if any(key not in event for key in required):
-                    raise ValueError("Missing required fields")
-
-                if not all(
-                    isinstance(event[key], str)
-                    for key in required
+                if any(
+                    not isinstance(event.get(field), str)
+                    for field in common_fields
                 ):
-                    raise ValueError("Invalid field types")
+                    raise ValueError(
+                        "Missing or invalid common fields"
+                    )
 
                 timestamp = datetime.fromisoformat(
-                    event["timestamp"].replace("Z", "+00:00")
+                    event["timestamp"].replace(
+                        "Z", "+00:00"
+                    )
                 )
 
                 if timestamp.tzinfo is None:
-                    raise ValueError("Timezone is required")
+                    raise ValueError(
+                        "Audit timestamp requires timezone"
+                    )
 
-                if event["event_type"] != "ai.security.evaluation":
-                    continue
+                if event_type == INTEGRITY_EVENT:
+                    if (
+                        event.get("route") not in {
+                            "/chat/rag",
+                            "/security/evaluate",
+                        }
+                        or event.get("stage") not in {
+                            "retrieval",
+                            "dependency_initialization",
+                        }
+                        or event["decision"] != "blocked"
+                        or event.get("review_required") is not True
+                    ):
+                        raise ValueError(
+                            "Invalid integrity event"
+                        )
 
-                events.append(event)
+                    events.append(event)
+
+                elif event_type == EVALUATION_EVENT:
+                    if not isinstance(
+                        event.get("cited_document"), str
+                    ):
+                        raise ValueError(
+                            "Invalid evaluation document ID"
+                        )
+
+                    events.append(event)
+
+                else:
+                    # Preserve the old reader's behavior:
+                    # unrelated valid events are ignored,
+                    # while malformed records are counted.
+                    if not isinstance(
+                        event.get("cited_document"), str
+                    ):
+                        raise ValueError(
+                            "Invalid unrecognized audit event"
+                        )
 
             except (
                 json.JSONDecodeError,
@@ -97,8 +141,10 @@ def run_live_monitor(
     window_minutes: int = 5,
 ) -> dict:
     """
-    Analyze the most recent monitoring window
-    using the current UTC time.
+    Run on-demand monitoring against current audit data.
+
+    Integrity events are now loaded, but alert
+    detection rules will be added in the next step.
     """
     audit_data = load_audit_events()
 

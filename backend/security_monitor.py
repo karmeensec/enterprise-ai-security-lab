@@ -2,24 +2,44 @@
 from datetime import datetime, timedelta, timezone
 
 
+EVALUATION_EVENT = "ai.security.evaluation"
+INTEGRITY_EVENT = "ai.security.document_integrity_failure"
+
+
 DETECTION_RULES = {
     "AI-MON-001": {
         "name": "Repeated AI evaluation failures",
+        "event_type": EVALUATION_EVENT,
         "decision": "evaluation_error",
         "threshold": 3,
         "severity": "high",
     },
     "AI-MON-002": {
         "name": "High manual review volume",
+        "event_type": EVALUATION_EVENT,
         "decision": "review_required",
         "threshold": 4,
         "severity": "medium",
     },
     "AI-MON-003": {
         "name": "Repeated unrecognized document references",
+        "event_type": EVALUATION_EVENT,
         "document_id": "UNRECOGNIZED",
         "threshold": 2,
         "severity": "medium",
+    },
+    "AI-MON-004": {
+        "name": "Knowledge-base integrity failure",
+        "event_type": INTEGRITY_EVENT,
+        "threshold": 1,
+        "severity": "high",
+    },
+    "AI-MON-005": {
+        "name": "Repeated knowledge-base integrity failures",
+        "event_type": INTEGRITY_EVENT,
+        "threshold": 3,
+        "severity": "critical",
+        "lookback_minutes": 5,
     },
 }
 
@@ -44,12 +64,11 @@ def analyze_security_events(
     reference_time: datetime | None = None,
 ) -> dict:
     """
-    Analyze structured AI security audit events.
+    Analyze evaluation and document-integrity audit events.
 
-    This initial version evaluates one time window.
-    It does not continuously monitor live requests.
+    This is an on-demand detection engine, not
+    a continuously running alert delivery service.
     """
-
     if window_minutes <= 0:
         raise ValueError(
             "Monitoring window must be positive"
@@ -58,7 +77,10 @@ def analyze_security_events(
     parsed_events = []
 
     for event in events:
-        if event.get("event_type") != "ai.security.evaluation":
+        if event.get("event_type") not in {
+            EVALUATION_EVENT,
+            INTEGRITY_EVENT,
+        }:
             continue
 
         timestamp = parse_timestamp(event["timestamp"])
@@ -69,8 +91,6 @@ def analyze_security_events(
         })
 
     if reference_time is None:
-        # For offline evaluation, anchor the window
-        # to the newest event in the dataset.
         reference_time = (
             max(
                 event["_parsed_timestamp"]
@@ -106,29 +126,47 @@ def analyze_security_events(
     alerts = []
 
     for rule_id, rule in DETECTION_RULES.items():
+        rule_events = [
+            event
+            for event in relevant_events
+            if event.get("event_type") == rule["event_type"]
+        ]
 
         if "decision" in rule:
-            matching_events = [
+            rule_events = [
                 event
-                for event in relevant_events
+                for event in rule_events
                 if event.get("decision") == rule["decision"]
             ]
 
-        else:
-            matching_events = [
+        if "document_id" in rule:
+            rule_events = [
                 event
-                for event in relevant_events
+                for event in rule_events
                 if (
                     event.get("cited_document")
                     == rule["document_id"]
                 )
             ]
 
-        # Do not count repeated records for the
-        # same request ID more than once.
+        # AI-MON-005 is limited to the most recent
+        # five minutes, even if the caller requests
+        # a longer monitoring window.
+        if "lookback_minutes" in rule:
+            rule_start = reference_time - timedelta(
+                minutes=rule["lookback_minutes"]
+            )
+
+            rule_events = [
+                event
+                for event in rule_events
+                if event["_parsed_timestamp"] >= rule_start
+            ]
+
+        # Deduplicate records by request ID.
         unique_events = {}
 
-        for event in matching_events:
+        for event in rule_events:
             request_id = event.get("request_id")
 
             if request_id:
@@ -144,7 +182,14 @@ def analyze_security_events(
                 "status": "triggered",
                 "event_count": count,
                 "threshold": rule["threshold"],
-                "window_minutes": window_minutes,
+                "window_minutes": (
+                    min(
+                        window_minutes,
+                        rule["lookback_minutes"],
+                    )
+                    if "lookback_minutes" in rule
+                    else window_minutes
+                ),
                 "request_ids": list(unique_events),
                 "detected_at": reference_time.isoformat(),
             })
