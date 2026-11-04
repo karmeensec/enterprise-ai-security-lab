@@ -1,0 +1,17 @@
+{
+  "manifest_version": 1,
+  "algorithm": "sha256",
+  "generated_at": "2026-11-04T17:04:26.762378+00:00",
+  "source": "data/knowledge_base/security_policies.json",
+  "sha256": "444b8fb849f10a49206e21e987e44b4f3b02c6415f7ec5b1f3fa2149971410b6",
+  "file_size_bytes": 1434,
+  "document_count": 5,
+  "document_ids": [
+    "POL-001",
+    "POL-002",
+    "POL-003",
+    "POL-004",
+    "POL-005"
+  ],
+  "approval_status": "approved"
+}

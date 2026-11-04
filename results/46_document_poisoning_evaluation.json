@@ -1,0 +1,48 @@
+{
+  "experiment": "46_document_poisoning_evaluation",
+  "cases": 4,
+  "passed": 4,
+  "failed": 0,
+  "test_mode": "temporary_isolated_copies",
+  "production_release_approved": false,
+  "results": [
+    {
+      "id": "KB-001",
+      "attack": "Clean policy baseline",
+      "expected": "verified",
+      "actual": "verified",
+      "passed": true,
+      "reason": "Integrity verification passed."
+    },
+    {
+      "id": "KB-002",
+      "attack": "VPN bypass poisoning",
+      "expected": "blocked",
+      "actual": "blocked",
+      "passed": true,
+      "reason": "SHA-256 mismatch: policy file modified."
+    },
+    {
+      "id": "KB-003",
+      "attack": "Credential sharing poisoning",
+      "expected": "blocked",
+      "actual": "blocked",
+      "passed": true,
+      "reason": "SHA-256 mismatch: policy file modified."
+    },
+    {
+      "id": "KB-004",
+      "attack": "Prompt injection inside policy",
+      "expected": "blocked",
+      "actual": "blocked",
+      "passed": true,
+      "reason": "SHA-256 mismatch: policy file modified."
+    }
+  ],
+  "limitations": [
+    "Assumes a trusted, attacker-inaccessible manifest.",
+    "Does not prevent an attacker with access to both the manifest and policy file.",
+    "No live retrieval or LLM inference performed.",
+    "Detects modifications, not malicious content already present in an approved baseline."
+  ]
+}
