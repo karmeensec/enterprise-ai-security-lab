@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent Security | AI Security Console</title>
+
+    <style>
+      :root {
+        --background: #f7f5f0;
+        --surface: #ffffff;
+        --sidebar: #fcfbf8;
+        --text: #192a40;
+        --muted: #778395;
+        --border: #e9e8e3;
+        --blue: #5279c5;
+        --mint: #dbeee6;
+        --rose: #f9e7e5;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--background);
+        color: var(--text);
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+      }
+
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 245px;
+        flex-shrink: 0;
+        padding: 32px 20px;
+        background: var(--sidebar);
+        border-right: 1px solid var(--border);
+      }
+
+      .brand {
+        padding: 0 12px 34px;
+      }
+
+      .brand-name {
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        line-height: 1.3;
+      }
+
+      .brand-subtitle {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .nav-label {
+        padding: 0 12px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+      }
+
+      .nav-item {
+        display: block;
+        text-decoration: none;
+        padding: 13px 15px;
+        margin-bottom: 6px;
+        border-radius: 10px;
+        color: #536174;
+        font-size: 14px;
+      }
+
+      .nav-item:hover {
+        background: #f0f2f6;
+      }
+
+      .nav-item.active {
+        background: #e9effb;
+        color: #3e67ba;
+        font-weight: 700;
+      }
+
+      .main {
+        flex: 1;
+        min-width: 0;
+        max-width: 1600px;
+        padding: 42px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: flex-start;
+        margin-bottom: 30px;
+      }
+
+      .eyebrow {
+        color: var(--blue);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        font-size: 30px;
+        letter-spacing: -0.7px;
+        margin: 10px 0;
+      }
+
+      h2 {
+        font-size: 17px;
+        margin: 0 0 8px;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .status {
+        background: var(--mint);
+        color: #28735b;
+        border-radius: 30px;
+        padding: 10px 14px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .card,
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 5px 22px rgba(25, 42, 64, 0.025);
+      }
+
+      .card h3 {
+        font-size: 13px;
+        color: var(--muted);
+        margin: 0;
+        font-weight: 600;
+      }
+
+      .number {
+        font-size: 38px;
+        font-weight: 750;
+        margin-top: 22px;
+        line-height: 1;
+      }
+
+      .metric-note {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 12px;
+      }
+
+      .panel {
+        margin-top: 22px;
+      }
+
+      .alert-item {
+        padding: 16px;
+        margin-top: 14px;
+        border: 1px solid var(--border);
+        background: #fcfbf8;
+        border-radius: 10px;
+      }
+
+      .alert-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .alert-title {
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .severity {
+        display: inline-block;
+        border-radius: 7px;
+        padding: 6px 10px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .severity.high {
+        background: var(--rose);
+        color: #b44848;
+      }
+
+      .severity.critical {
+        background: #6f2638;
+        color: white;
+      }
+
+      .severity.medium {
+        background: #fff3dc;
+        color: #946419;
+      }
+
+      .alert-details {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.8;
+        margin-top: 10px;
+        overflow-wrap: anywhere;
+      }
+
+      .empty-state {
+        margin-top: 20px;
+        padding: 30px 15px;
+        border: 1px dashed #d9dfe6;
+        border-radius: 12px;
+        background: #fcfcfb;
+        text-align: center;
+      }
+
+      .empty-title {
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 7px;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        margin-top: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      th,
+      td {
+        padding: 13px 12px;
+        text-align: left;
+      }
+
+      th {
+        color: var(--muted);
+        font-weight: 650;
+      }
+
+      tbody tr {
+        border-top: 1px solid var(--border);
+      }
+
+      td {
+        overflow-wrap: anywhere;
+      }
+
+      .decision {
+        display: inline-block;
+        padding: 6px 9px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .decision.allowed {
+        background: var(--mint);
+        color: #28735b;
+      }
+
+      .decision.blocked {
+        background: var(--rose);
+        color: #b44848;
+      }
+
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 11px 17px;
+        background: var(--blue);
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .footnote {
+        margin-top: 26px;
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      @media (max-width: 1100px) {
+        .cards {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 700px) {
+        .layout {
+          display: block;
+        }
+
+        .sidebar {
+          width: 100%;
+          padding: 18px;
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .main {
+          padding: 22px;
+        }
+
+        .cards {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-name">AI Security Console</div>
+          <div class="brand-subtitle">Enterprise Security Operations</div>
+        </div>
+
+        <div class="nav-label">WORKSPACE</div>
+
+        <a class="nav-item" href="/dashboard/"> Overview </a>
+
+        <a class="nav-item" href="/dashboard/monitoring">
+          Security Monitoring
+        </a>
+
+        <a
+          class="nav-item active"
+          href="/dashboard/agent-security"
+          aria-current="page"
+        >
+          Agent Security
+        </a>
+
+        <a class="nav-item" href="/dashboard/rules"> Detection Rules </a>
+
+        <a class="nav-item" href="/dashboard/events"> Audit Events </a>
+
+        <a class="nav-item" href="/dashboard/monitoring#case-management">
+          Investigation Cases
+        </a>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <div class="eyebrow">Security Intelligence</div>
+
+            <h1>Agent Security Monitoring</h1>
+
+            <p class="subtitle">
+              Authorized AI tool activity, security decisions, and detection
+              intelligence.
+            </p>
+          </div>
+
+          <span class="status"> On-demand monitoring </span>
+        </header>
+
+        <section class="cards">
+          <div class="card">
+            <h3>Total Agent Events</h3>
+            <div class="number">{{ total_agent_events }}</div>
+            <div class="metric-note">Validated agent audit records</div>
+          </div>
+
+          <div class="card">
+            <h3>Recent Agent Events</h3>
+            <div class="number">{{ recent_agent_events }}</div>
+            <div class="metric-note">Last {{ monitoring_window }} minutes</div>
+          </div>
+
+          <div class="card">
+            <h3>Active Agent Alerts</h3>
+            <div class="number">{{ alert_count }}</div>
+            <div class="metric-note">Triggered detection rules</div>
+          </div>
+
+          <div class="card">
+            <h3>High Severity Alerts</h3>
+            <div class="number">{{ high_severity_count }}</div>
+            <div class="metric-note">High or critical severity</div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="toolbar">
+            <div>
+              <h2>Agent Security Detection Findings</h2>
+
+              <p class="subtitle">
+                Rules AI-MON-006 through AI-MON-008. Five-minute detection
+                window.
+              </p>
+            </div>
+
+            <a class="btn" href="/dashboard/agent-security">
+              Refresh Monitoring
+            </a>
+          </div>
+
+          {% if alerts %} {% for alert in alerts %}
+          <article class="alert-item">
+            <div class="alert-header">
+              <span class="alert-title">
+                {{ alert.rule_id }} — {{ alert.rule_name }}
+              </span>
+
+              <span class="severity {{ alert.severity }}">
+                {{ alert.severity | upper }}
+              </span>
+            </div>
+
+            <div class="alert-details">
+              Principal reference: {{ alert.principal_ref }}
+            </div>
+
+            <div class="alert-details">
+              Matching events: {{ alert.event_count }} | Threshold: {{
+              alert.threshold }} | Detected: {{ alert.detected_at }}
+            </div>
+          </article>
+          {% endfor %} {% else %}
+
+          <div class="empty-state">
+            <div class="empty-title">No active agent security alerts</div>
+
+            <p class="subtitle">
+              No agent detection thresholds were met in the current five-minute
+              window.
+            </p>
+          </div>
+
+          {% endif %}
+        </section>
+
+        <section class="panel">
+          <h2>Agent Audit Activity</h2>
+
+          <p class="subtitle">
+            Latest {{ display_limit }} agent events across the available audit
+            history. Raw prompts, credentials, and tool arguments are not
+            displayed.
+          </p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Tool</th>
+                  <th>Decision</th>
+                  <th>Reason</th>
+                  <th>Principal</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {% for event in events %}
+                <tr>
+                  <td>{{ event.timestamp }}</td>
+
+                  <td>{{ event.tool_name }}</td>
+
+                  <td>
+                    <span class="decision {{ event.decision }}">
+                      {{ event.decision | upper }}
+                    </span>
+                  </td>
+
+                  <td>{{ event.reason_category | replace('_', ' ') }}</td>
+
+                  <td>{{ event.principal_ref }}</td>
+                </tr>
+
+                {% else %}
+                <tr>
+                  <td colspan="5">No agent audit events recorded.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <p class="footnote">
+          Last refreshed: {{ generated_at }}. Monitoring is calculated when this
+          page is requested, not streamed continuously. Detection alerts require
+          analyst review and do not prove that an incident occurred. Invalid
+          agent audit lines: {{ invalid_agent_lines }}. Principal identifiers
+          are pseudonymized.
+        </p>
+      </main>
+    </div>
+  </body>
+</html>
