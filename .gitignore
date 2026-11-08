@@ -9,3 +9,5 @@ __pycache__/
 
 # Local security audit logs
 logs/
+
+/backups/
