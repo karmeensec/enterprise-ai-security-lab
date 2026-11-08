@@ -1,0 +1,39 @@
+services:
+  aegis:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    image: aegis-security-lab:local
+
+    container_name: aegis-security-lab
+
+    ports:
+      - "127.0.0.1:8000:8000"
+
+    env_file:
+      - .env
+
+    environment:
+      HF_HOME: /app/.cache/huggingface
+      PYTHONUNBUFFERED: "1"
+
+    volumes:
+      - aegis_logs:/app/logs
+      - aegis_results:/app/results
+      - aegis_model_cache:/app/.cache/huggingface
+
+    security_opt:
+      - no-new-privileges:true
+
+    cap_drop:
+      - ALL
+
+    init: true
+
+    restart: unless-stopped
+
+volumes:
+  aegis_logs:
+  aegis_results:
+  aegis_model_cache:
