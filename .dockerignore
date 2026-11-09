@@ -1,11 +1,11 @@
 
 .git
 .gitignore
-.venv
-venv
-__pycache__
+.venv/
+venv/
+__pycache__/
 *.pyc
-.pytest_cache
+.pytest_cache/
 
 .env
 .env.*
@@ -13,16 +13,17 @@ __pycache__
 
 logs/
 results/
+backups/
 
 .cache/
-.cache
-huggingface/
 .huggingface/
+huggingface/
 
 *.pt
 *.pth
 *.ckpt
 *.safetensors
+*.bak
 
 tests/
 experiments/

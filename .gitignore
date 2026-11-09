@@ -1,13 +1,40 @@
+
+# Python environments and caches
 .venv/
+venv/
 __pycache__/
 *.pyc
-.env
-.env.*
-!.env.example
 .ipynb_checkpoints/
 .pytest_cache/
 
-# Local security audit logs
-logs/
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
 
+# IDE configuration
+.vscode/
+.idea/
+
+# Temporary code backups
+*.bak
+
+# Runtime security records
+/logs/
 /backups/
+
+# Local generated experiment results
+/results/
+
+# Local AI model caches and weights
+.cache/
+.huggingface/
+huggingface/
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+
+# Operating system files
+.DS_Store
+Thumbs.db
