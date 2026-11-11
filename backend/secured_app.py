@@ -3,24 +3,21 @@
 Enterprise AI Security Platform.
 
 Local Docker:
-    Full FastAPI application with Qwen and agent tools.
+    Full authenticated application with Qwen and agent tools.
 
 Render demo:
-    Lightweight, authenticated, read-only dashboard.
-    No AI inference, fabricated telemetry, or response actions.
+    Public, read-only portfolio dashboard.
+    No model loading, live telemetry, or response actions.
 """
 
 import os
 
 
 if os.environ.get("RENDER_DEMO") == "1":
-    import secrets
-
     from datetime import datetime, timezone
     from pathlib import Path
 
     from fastapi import (
-        Depends,
         FastAPI,
         HTTPException,
         Query,
@@ -30,14 +27,10 @@ if os.environ.get("RENDER_DEMO") == "1":
         HTMLResponse,
         RedirectResponse,
     )
-    from fastapi.security import (
-        HTTPBasic,
-        HTTPBasicCredentials,
-    )
     from fastapi.templating import Jinja2Templates
 
     app = FastAPI(
-        title="Enterprise AI Security Lab — Demo",
+        title="Enterprise AI Security Lab — Portfolio Demo",
         docs_url=None,
         redoc_url=None,
         openapi_url=None,
@@ -51,57 +44,16 @@ if os.environ.get("RENDER_DEMO") == "1":
         )
     )
 
-    security = HTTPBasic(auto_error=False)
-
     BANNER = (
-        '<div role="status" style="padding:14px 24px;'
-        'background:#fff2d6;color:#684c13;'
+        '<div role="status" style="'
+        'padding:14px 24px;'
+        'background:#fff2d6;'
+        'color:#684c13;'
         'font:600 13px Segoe UI,Arial,sans-serif">'
-        'PORTFOLIO DEMO · Read-only · '
+        'PORTFOLIO DEMO · Public read-only view · '
         'No live telemetry · AI inference disabled'
         '</div>'
     )
-
-    def require_login(
-        credentials: HTTPBasicCredentials | None = Depends(
-            security
-        ),
-    ) -> str:
-        username = os.environ.get(
-            "DASHBOARD_USERNAME", ""
-        )
-        password = os.environ.get(
-            "DASHBOARD_PASSWORD", ""
-        )
-
-        if not username or not password:
-            raise HTTPException(
-                status_code=503,
-                detail="Authentication not configured",
-            )
-
-        authenticated = (
-            credentials is not None
-            and secrets.compare_digest(
-                credentials.username.encode(),
-                username.encode(),
-            )
-            and secrets.compare_digest(
-                credentials.password.encode(),
-                password.encode(),
-            )
-        )
-
-        if not authenticated:
-            raise HTTPException(
-                status_code=401,
-                detail="Authentication required",
-                headers={
-                    "WWW-Authenticate": 'Basic realm="Demo"'
-                },
-            )
-
-        return username
 
     @app.middleware("http")
     async def security_headers(
@@ -133,6 +85,7 @@ if os.environ.get("RENDER_DEMO") == "1":
         )
 
         html = response.body.decode("utf-8")
+
         html = html.replace(
             "<body>",
             "<body>\n" + BANNER,
@@ -166,6 +119,7 @@ if os.environ.get("RENDER_DEMO") == "1":
             "status": "healthy",
             "mode": "portfolio_demo",
             "ai_inference": False,
+            "read_only": True,
         }
 
     @app.get("/")
@@ -179,10 +133,7 @@ if os.environ.get("RENDER_DEMO") == "1":
         "/dashboard/",
         response_class=HTMLResponse,
     )
-    def overview(
-        request: Request,
-        _: str = Depends(require_login),
-    ):
+    def overview(request: Request):
         return render_page(
             request,
             "index.html",
@@ -203,7 +154,6 @@ if os.environ.get("RENDER_DEMO") == "1":
             ge=1,
             le=60,
         ),
-        _: str = Depends(require_login),
     ):
         return render_page(
             request,
@@ -219,10 +169,7 @@ if os.environ.get("RENDER_DEMO") == "1":
         "/dashboard/rules",
         response_class=HTMLResponse,
     )
-    def rules(
-        request: Request,
-        _: str = Depends(require_login),
-    ):
+    def rules(request: Request):
         context = dashboard_context(
             "rules",
             "Detection Rules",
@@ -252,7 +199,6 @@ if os.environ.get("RENDER_DEMO") == "1":
             ge=1,
             le=100,
         ),
-        _: str = Depends(require_login),
     ):
         allowed_decisions = {
             "all",
@@ -292,10 +238,7 @@ if os.environ.get("RENDER_DEMO") == "1":
         "/dashboard/agent-security",
         response_class=HTMLResponse,
     )
-    def agent_security(
-        request: Request,
-        _: str = Depends(require_login),
-    ):
+    def agent_security(request: Request):
         return render_page(
             request,
             "agent_security.html",
@@ -317,34 +260,41 @@ if os.environ.get("RENDER_DEMO") == "1":
             },
         )
 
+    # Read-only dashboard API responses.
+    # No private records are loaded.
+
     @app.get("/dashboard/cases")
-    def list_cases(
-        _: str = Depends(require_login),
-    ):
+    def list_cases():
         return {
             "cases": [],
             "count": 0,
             "mode": "read_only_demo",
         }
 
+    @app.get("/dashboard/response-actions")
+    def response_actions():
+        return {
+            "actions": [],
+            "execution_mode": "disabled",
+        }
+
     @app.get("/dashboard/response-plans")
-    def list_plans(
-        _: str = Depends(require_login),
-    ):
+    def list_plans():
         return {
             "plans": [],
             "count": 0,
+            "mode": "read_only_demo",
         }
 
     @app.get("/dashboard/simulations")
-    def list_simulations(
-        _: str = Depends(require_login),
-    ):
+    def list_simulations():
         return {
             "simulations": [],
             "count": 0,
             "execution_mode": "disabled",
         }
+
+    # Block every dashboard modification.
 
     @app.api_route(
         "/dashboard/{path:path}",
@@ -355,14 +305,13 @@ if os.environ.get("RENDER_DEMO") == "1":
             "DELETE",
         ],
     )
-    def block_writes(
-        path: str,
-        _: str = Depends(require_login),
-    ):
+    def block_dashboard_writes(path: str):
         raise HTTPException(
             status_code=403,
             detail="Portfolio demo is read-only",
         )
+
+    # No AI agent access in the public demo.
 
     @app.api_route(
         "/agent/{path:path}",
@@ -374,10 +323,7 @@ if os.environ.get("RENDER_DEMO") == "1":
             "DELETE",
         ],
     )
-    def block_agent(
-        path: str,
-        _: str = Depends(require_login),
-    ):
+    def block_agent(path: str):
         raise HTTPException(
             status_code=503,
             detail="AI agent unavailable in demo",
@@ -393,10 +339,7 @@ if os.environ.get("RENDER_DEMO") == "1":
             "DELETE",
         ],
     )
-    def block_chat(
-        path: str,
-        _: str = Depends(require_login),
-    ):
+    def block_chat(path: str):
         raise HTTPException(
             status_code=503,
             detail="AI inference unavailable in demo",
@@ -412,22 +355,20 @@ if os.environ.get("RENDER_DEMO") == "1":
             "DELETE",
         ],
     )
-    def block_evaluation(
-        path: str,
-        _: str = Depends(require_login),
-    ):
+    def block_security_evaluation(path: str):
         raise HTTPException(
             status_code=503,
             detail="Security evaluation unavailable in demo",
         )
 
 else:
-    # Original local application remains unchanged.
+    # The original full application remains protected.
     from backend.main import app
 
     from backend.agent_api import (
         router as agent_router,
     )
+
     from backend.agent_dashboard import (
         router as agent_dashboard_router,
     )
