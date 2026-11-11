@@ -1,145 +1,188 @@
 # Enterprise AI Security Lab
 
-**A locally deployed AI security research platform for evaluating and defending retrieval-augmented generation (RAG), LLM agents, and cybersecurity workflows.**
+**An end-to-end AI security research platform combining local Qwen inference, retrieval-augmented generation (RAG), agent authorization, prompt-injection testing, and SOC-style monitoring.**
 
-This independent project combines a local instruction-tuned language model, security-focused APIs, document retrieval, authorization controls, attack simulations, audit logging, and SOC-style monitoring. The platform is designed for repeatable security experiments and portfolio demonstrations—not as an independently audited production security system.
+[**Live Dashboard Demo**](https://enterprise-ai-security-lab-apnu.onrender.com/dashboard/) · [**Source Code**](https://github.com/karmeensec/enterprise-ai-security-lab) · [**Deployment Guide**](docs/DEPLOYMENT.md) · [**Threat Model**](threat_model.md)
 
-## Highlights
+> **Demo vs. full platform:** The public Render deployment is a **read-only UI demonstration** with no live telemetry, no AI inference, and no writable security workflows. The full application—including local Qwen3-0.6B, RAG, security controls, and agent tools—runs in the local development environment. The hosted demo's empty counters are not production monitoring results.
 
-- **Local AI inference:** Qwen3-0.6B running with PyTorch and Hugging Face Transformers; CUDA acceleration on an NVIDIA RTX 3050 or CPU inference in Docker.
-- **Retrieval-augmented generation:** Security-policy retrieval, citation and grounding validation, and evaluations of answer accuracy.
-- **LLM security research:** Direct and indirect prompt injection, poisoned documents, adversarial grounding, and defense comparisons.
-- **Agent tool security:** Explicit server-side authorization, validated tool calls, constrained proposals, and simulation-only response actions.
-- **Security operations:** Monitoring, security audit records, investigation cases, response plans, and dedicated agent security dashboard.
-- **Deployment and operations:** FastAPI, Docker Compose, non-root execution, localhost-only binding, persistent local volumes, backup/restore validation, and deployment-readiness checks.
+## Overview
+
+Enterprise AI Security Lab is an independent engineering and security research project built to explore how enterprise LLM applications can be deployed, evaluated, attacked in controlled tests, and defended. It brings together a local language model, policy-grounded answers, constrained agent tool calls, audit records, security detections, investigation workflows, and a browser-based security operations interface.
+
+The emphasis is on **security boundaries and measurable behavior**: the model may propose an action, but the application decides which tools are available, validates their inputs, enforces authorization, and restricts response operations to simulations.
+
+## Platform Preview
+
+### Security operations dashboard
+
+![SOC dashboard with live development audit metrics](screenshots/32_dashboard_live_metrics.png)
+
+### Agent security monitoring
+
+![Agent security dashboard showing monitored AI tool activity](screenshots/58_agent_security_dashboard.png)
+
+### Policy-grounded AI API
+
+![FastAPI RAG endpoint returning a Qwen response with retrieved security policy context](screenshots/14_rag_qwen_api_response.png)
+
+_The screenshots show the **local development and test environment**, not live events from the public Render demo._
+
+## Key Capabilities
+
+| Area                           | Implemented capability                                                                                                     |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| Local LLM inference            | Qwen/Qwen3-0.6B through PyTorch and Hugging Face Transformers; CUDA on Windows or CPU inference in Docker                  |
+| Retrieval-augmented generation | Security policy retrieval, document citations, grounding validation, and claim verification                                |
+| AI security research           | Direct and indirect prompt injection, adversarial grounding, document poisoning, and defensive evaluations                 |
+| Agent tool security            | Structured tool proposals, server-controlled permissions, validated arguments, authorized tool dispatch, and audit logging |
+| Security operations            | Detection rules, audit event filtering, investigation case management, response plans, and read-only agent monitoring      |
+| Incident response boundary     | Policy-governed proposals and **simulation-only** response actions; no autonomous real-world enforcement                   |
+| Deployment                     | FastAPI, Docker Compose, non-root container execution, local persistent volumes, backup verification, and security checks  |
 
 ## Architecture
 
-```text
-                        Authenticated browser / API client
-                                      |
-                                      v
-                           FastAPI application
-                         backend.secured_app:app
-                                      |
-                  +-------------------+-------------------+
-                  |                   |                   |
-                  v                   v                   v
-           SOC dashboard       AI agent endpoint     Security monitoring
-                  |                   |                   |
-                  |                   v                   |
-                  |             Qwen3-0.6B model          |
-                  |                   |                   |
-                  |           Validated tool proposal     |
-                  |                   |                   |
-                  |         Server-side authorization     |
-                  |                   |                   |
-                  |     +-------------+-------------+     |
-                  |     |             |             |     |
-                  |  Policy       Investigation   Response|
-                  |  search       /timeline       proposal|
-                  |     |             |        (simulation only)
-                  |     v             |             |     |
-                  |  Trusted         |             |     |
-                  |  documents       |             |     |
-                  +-----+-------------+-------------+-----+
-                        |
-                        v
-                JSONL audit and case records
-                (persistent Docker volumes)
+```mermaid
+flowchart TD
+    A[Authenticated local user / analyst] --> B[FastAPI application]
+    B --> C[SOC dashboard and monitoring]
+    B --> D[RAG and security evaluation]
+    B --> E[AI agent API]
+    D --> F[Trusted policy retrieval]
+    D --> G[Grounding, citation, and output checks]
+    E --> H[Local Qwen3-0.6B]
+    H --> I[Structured tool proposal]
+    I --> J{Server-side validation and authorization}
+    J -->|Allowed| K[Read-only investigation / policy tools]
+    J -->|Response proposal| L[Simulation-only response workflow]
+    J -->|Denied| M[Blocked and audited]
+    C --> N[(JSONL audit and case records)]
+    D --> N
+    E --> N
+    K --> N
+    L --> N
+    M --> N
 ```
 
-The model proposes actions, but **authorization and tool execution are controlled by application code**, not by model output. The platform does not perform real account disabling, host isolation, or other autonomous incident-response actions.
+The **public Render demo** follows a separate lightweight code path. It renders the dashboard templates with empty, explicitly non-live data; it does not import the model stack or expose writable agent and case-management operations.
 
-## Technology
+## Security Research Highlights
 
-| Area               | Technologies                                               |
-| ------------------ | ---------------------------------------------------------- |
-| Language / backend | Python 3.12, FastAPI                                       |
-| Language model     | Qwen/Qwen3-0.6B, PyTorch, Hugging Face Transformers        |
-| Acceleration       | NVIDIA CUDA (local Windows), CPU-only PyTorch (Docker)     |
-| Application        | REST APIs, browser-based SOC and agent dashboards          |
-| Evaluation         | pytest, reproducible experimental scripts and JSON reports |
-| Deployment         | Docker, Docker Compose, WSL 2 on Windows                   |
-| Logging / state    | JSONL audit records, persistent local Docker volumes       |
+### Agent prompt-injection red team
 
-## Verified Results
+![Agent red-team evaluation results](screenshots/54_agent_prompt_injection_redteam.png)
 
-The measurements below are **observations from this development environment**, not performance guarantees for other machines.
+In the tested Experiment 54 scenarios, **8/8 adversarial agent requests were blocked**. This is a measured outcome for those cases, not a guarantee against all attacks.
 
-### Model inference benchmark — Experiment 64
+### Indirect prompt injection and RAG defenses
 
-Same Qwen3-0.6B model and prompt, with one warm-up and three measured generations per environment. Generation used the application's sampling configuration and a 96-token cap.
+![Indirect prompt-injection defensive evaluation](screenshots/55_indirect_prompt_injection_redteam.png)
 
-| Metric                      | Windows / RTX 3050 CUDA |      Docker / CPU |
-| --------------------------- | ----------------------: | ----------------: |
-| Aggregate throughput        |      **12.08 tokens/s** | **5.78 tokens/s** |
-| Average generation time     |                 7.917 s |          16.205 s |
-| Process RAM after benchmark |             3,179.59 MB |          3,147 MB |
-| Peak CUDA allocated memory  |             1,177.32 MB |               N/A |
+![RAG defense evaluation](screenshots/43_rag_defense_integration.png)
 
-The GPU provided **approximately 2.09× throughput** in this workload. The first Docker model-load measurement included downloading model files and is not directly comparable to a cached GPU load.
+The experiments evaluate how retrieved or user-supplied content can attempt to redirect model behavior, and how document trust boundaries, retrieval checks, output validation, and authorization controls respond. Some earlier baselines showed defense gaps and were retained for comparative research.
 
-### Validation
+### Knowledge-base integrity
 
-- **547 automated tests passed** at the completion of Experiment 65.
-- **22/22 deployment-readiness checks passed** for the local development baseline.
-- Docker deployment verified healthy with an unprivileged user, reduced Linux capabilities, and loopback host-port binding.
-- CPU and GPU Qwen inference were both executed and measured, rather than mocked.
+![Document-poisoning detection evaluation](screenshots/46_document_poisoning_detection.png)
 
-## Running Locally
+Document integrity and claim-verification experiments explore risks from manipulated policy material and unsupported model claims.
 
-### Requirements
+### Real model and deployment validation
 
-- Docker Desktop with Docker Compose
-- Memory and disk space sufficient for a CPU-hosted 0.6B-parameter language model
-- An internet connection for initial model downloads
+![Real Qwen agent evaluation](screenshots/53_real_qwen_agent_evaluation.png)
 
-1. Clone the repository and enter the project folder.
-2. Copy `.env.example` to `.env` and configure **strong, private credentials** and the other documented environment settings. Do not commit `.env`.
-3. Build and start the container:
+![Docker deployment security validation](screenshots/62_security_validation.png)
+
+## Verified Engineering Results
+
+**These results are measurements from the development environment and specified test cases, not production reliability or security guarantees.**
+
+| Validation                          | Verified result                                                           |
+| ----------------------------------- | ------------------------------------------------------------------------- |
+| Automated Python tests              | **547 passed** at Experiment 65                                           |
+| Deployment-readiness audit          | **22/22 checks passed**, labeled `LOCAL_DEVELOPMENT_BASELINE`             |
+| Docker security smoke test          | **9/9 checks passed** in the tested local deployment                      |
+| Agent red-team evaluation (Exp. 54) | **8/8** tested adversarial requests blocked                               |
+| Local GPU vs. Docker CPU inference  | **12.08 vs. 5.78 generated tokens/s**                                     |
+| Docker API benchmark (Exp. 63)      | **485.33 requests/s** for the `/health` workload (50 sequential requests) |
+
+### GPU vs. CPU: Qwen3-0.6B (Experiment 64)
+
+The same prompt was evaluated with one warm-up and three measured generations per environment. A 96-token limit was used; sampling means the number of generated tokens can vary slightly.
+
+| Measurement                           | Windows RTX 3050 CUDA |     Docker CPU |
+| ------------------------------------- | --------------------: | -------------: |
+| Aggregate generated tokens per second |             **12.08** |       **5.78** |
+| Mean generation time                  |               7.917 s |       16.205 s |
+| Process RAM after benchmark           |           3,179.59 MB |       3,147 MB |
+| Peak PyTorch CUDA allocation          |           1,177.32 MB | Not applicable |
+
+**Observed GPU throughput was about 2.09× higher.** Initial Docker loading included a first-time model download, so model-load time is not a like-for-like initialization comparison.
+
+![Qwen GPU and CPU benchmark summary](screenshots/63_performance.png)
+
+## Technology Stack
+
+| Component                | Technologies                                                      |
+| ------------------------ | ----------------------------------------------------------------- |
+| Backend / API            | Python 3.12, FastAPI, Pydantic, Uvicorn                           |
+| Model inference          | Qwen3-0.6B, PyTorch, Hugging Face Transformers                    |
+| Retrieval and evaluation | Semantic retrieval, citation / claim / grounding checks, pytest   |
+| Frontend                 | Server-rendered Jinja2 dashboard templates, HTML, CSS, JavaScript |
+| Security operations      | JSONL audit and workflow records, monitoring / detection rules    |
+| Infrastructure           | Docker, Docker Compose, Windows 11, WSL 2, NVIDIA CUDA            |
+| Public portfolio demo    | Render free-tier Docker service, lightweight read-only mode       |
+
+## Run the Full Platform Locally
+
+**Requirements:** Docker Desktop with Docker Compose, sufficient RAM and storage for Qwen3-0.6B, and an internet connection for the initial model download.
+
+```powershell
+git clone https://github.com/karmeensec/enterprise-ai-security-lab.git
+cd enterprise-ai-security-lab
+Copy-Item .env.example .env
+```
+
+Configure the variables in `.env` with **your own credentials and secrets**; never commit this file. See [Deployment and Operations](docs/DEPLOYMENT.md) for the environment configuration and operational details.
 
 ```powershell
 docker compose up -d --build --wait
-```
-
-4. Check container health:
-
-```powershell
 docker compose ps
 curl.exe http://127.0.0.1:8000/health
 ```
 
-5. Open the locally hosted dashboard at `http://127.0.0.1:8000/dashboard/` and authenticate using the configured credentials.
+Open **http://127.0.0.1:8000/dashboard/** and authenticate using your configured local dashboard credentials. Docker uses the CPU inference stack; the separate native Windows Python environment can use CUDA on compatible NVIDIA hardware.
 
-> The full local Docker image supports CPU inference. The locally configured Windows Python environment can use CUDA separately. Initial model downloads and inference can take time.
+To run the existing regression tests from an appropriately configured Python environment:
 
-For operational procedures, including shutdown, backups, recovery, and troubleshooting, see [Deployment and Operations](docs/DEPLOYMENT.md).
+```powershell
+python -m pytest tests/ -q
+```
 
-## Research Areas
+**Public demo:** [Open the read-only security dashboard on Render](https://enterprise-ai-security-lab-apnu.onrender.com/dashboard/). It has intentionally reduced functionality, and free-tier services may take time to wake after inactivity.
 
-This repository contains experiments involving:
+## Repository Guide
 
-- **RAG and grounded generation:** Retrieval quality, source citation checks, and claim verification.
-- **Adversarial LLM inputs:** Direct prompt injection, indirect attacks through retrieved material, and poisoned policy documents.
-- **Defense evaluation:** Grounding strategies, response policy checks, and comparison of security outcomes across configurations.
-- **Agentic security:** Tool-call parsing, least-privilege access, role enforcement, auditing, and red-team scenarios.
-- **SOC workflows:** Security events, monitoring, investigation records, response planning, and backup integrity.
+- `backend/` — FastAPI application, model integration, security validation, agent controls, SOC logic, and deployment utilities
+- `dashboard/` — Browser-based SOC and agent security dashboards
+- `experiments/` — Development and evaluation experiments
+- `tests/` — Automated security, integration, and regression tests
+- `results/` — Selected historical experimental evaluation artifacts
+- `screenshots/` — Visual evidence from local experiments and dashboards
+- `docs/DEPLOYMENT.md` — Deployment, monitoring, backup, and recovery instructions
+- `threat_model.md` — Security assumptions, trust boundaries, and threats
 
-Evaluation scripts and historical result files document the development process. Treat measured outcomes as specific to the tested prompts, data, configurations, and versions.
+## Limitations and Responsible Use
 
-## Security Boundaries and Limitations
+- This is an **independent research and portfolio project**, not an audited production SOC service.
+- The hosted Render demo is **public and read-only**, uses no real customer data, and **does not run Qwen inference**. Empty dashboard metrics must not be interpreted as a live security assessment.
+- The local version uses HTTP Basic authentication and is bound to localhost through Docker Compose. Public production deployment would require a different identity, session, TLS, CSRF, storage, and operational security design.
+- The AI agent cannot carry out real incident-response actions; response workflows are simulated.
+- Some dependencies and model downloads are not pinned to immutable artifacts, and JSONL records are not a production multi-node datastore.
+- Experimental defenses were evaluated on finite, controlled scenarios; their results do **not** imply complete resistance to prompt injection or model misuse.
+- Use adversarial workflows only on systems and data you are authorized to test.
 
-- This is a **research and demonstration system**, not a production-grade SOC or a replacement for analyst judgment.
-- AI-proposed response operations are **simulation only**; the model is not authorized to execute real response actions.
-- The local deployment uses HTTP Basic authentication and a loopback-only host port. Internet-facing use requires additional authentication, TLS, and deployment-specific review.
-- Docker CPU dependencies and model artifacts are not yet fully pinned to immutable versions or hashes.
-- Local JSONL storage and Docker volumes are not a managed production database or disaster-recovery service.
-- Any public demonstration should disable unsupported AI features rather than inventing simulated outputs, and should not expose private logs or security data.
-- Readiness checks assess specified local configuration properties; they are **not** a penetration test or certification of production security.
+---
 
-## Documentation
-
-- [Deployment and Operations](docs/DEPLOYMENT.md)
-- [Threat Model](threat_model.md)
-- Historical experiments and evaluation results are available in the corresponding project directories.
+**Project status:** Core platform, local Docker deployment, security evaluations, and public read-only dashboard demo implemented. Further development may extend inference deployment, operational persistence, and independent security validation.
